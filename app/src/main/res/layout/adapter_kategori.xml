@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:text="Keterangan barang."
+        android:textColor="@color/colorBlack"
         android:id="@+id/tx_title"/>
 
 </LinearLayout>

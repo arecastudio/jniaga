@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import io.github.arecastudio.jniaga.R;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
+import io.github.arecastudio.jniaga.imgs.ImageLoader;
 import io.github.arecastudio.jniaga.model.DataKategori;
 
 /**
@@ -65,7 +66,11 @@ public class KategoriAdapter extends BaseAdapter {
 
         //imageView.setImageResource(icons[position]);
 
-        imageView.setImageResource(dk.getIcon());
+        //imageView.setImageResource(dk.getIcon());
+        //if (dk.getIcon()!=null) imageView.setImageBitmap(dk.getIcon());
+
+        ImageLoader loader=new ImageLoader(context);
+        loader.DisplayImage(dk.getIcon(),imageView);
 
         return convertView;
     }

@@ -9,12 +9,13 @@ import android.content.Context;
 public class StaticUtil {
     private static boolean isLogin;
     private static Context context;
-    private static final String webUrl="http://139.59.241.190/api/jniaga/";
+    private static String webUrl="http://139.59.241.190/api/jniaga/";
 
     public StaticUtil(){
     }
 
     public static String getWebUrl() {
+        StaticUtil.webUrl="http://10.0.2.2/projects/jniaga/api/";
         return webUrl;
     }
 
