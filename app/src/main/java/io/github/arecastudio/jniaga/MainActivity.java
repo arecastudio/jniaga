@@ -1,5 +1,6 @@
 package io.github.arecastudio.jniaga;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.design.widget.NavigationView;
@@ -13,9 +14,14 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 import io.github.arecastudio.jniaga.fragments.Cari;
 import io.github.arecastudio.jniaga.fragments.Kategori;
+import io.github.arecastudio.jniaga.fragments.LoginFB;
 import io.github.arecastudio.jniaga.fragments.Terbaru;
 
 public class MainActivity extends AppCompatActivity
@@ -25,9 +31,16 @@ public class MainActivity extends AppCompatActivity
     private FrameLayout fMain;
     private FragmentManager fm;
 
+    private CallbackManager callbackManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
+
+        //callbackManager = CallbackManager.Factory.create();
 
         StaticUtil.setContext(getApplicationContext());
 
@@ -62,6 +75,12 @@ public class MainActivity extends AppCompatActivity
         fm=getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.MainFrame,new Terbaru()).commit();
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //callbackManager.onActivityResult(requestCode,resultCode,data);
     }
 
     @Override
@@ -126,6 +145,8 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_pencarian:
                 fm.beginTransaction().replace(R.id.MainFrame,new Cari()).commit();
                 break;
+            case R.id.nav_login:
+                fm.beginTransaction().replace(R.id.MainFrame,new LoginFB()).commit();
             default:
         }
 
