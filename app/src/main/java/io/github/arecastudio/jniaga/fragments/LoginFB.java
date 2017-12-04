@@ -1,5 +1,6 @@
 package io.github.arecastudio.jniaga.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,6 +19,10 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import io.github.arecastudio.jniaga.MainActivity;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 
@@ -34,6 +39,13 @@ public class LoginFB extends Fragment {
     private LoginButton loginButton;
     private CallbackManager callbackManager;
     private TextView tx_status;
+    private Context context;
+
+    private final String[] permissions={"publish_actions","email","user_status","public_profile"};
+
+    public LoginFB(){
+        context=StaticUtil.getContext();
+    }
 
     @Nullable
     @Override
@@ -41,13 +53,18 @@ public class LoginFB extends Fragment {
         View view=inflater.inflate(R.layout.frame_login,container,false);
 
         FacebookSdk.sdkInitialize(StaticUtil.getContext());
+        AppEventsLogger.activateApp(context);
 
         loginButton = (LoginButton) view.findViewById(R.id.login_button);
         tx_status=(TextView)view.findViewById(R.id.tx_status);
 
         callbackManager = CallbackManager.Factory.create();
         loginButton.setReadPermissions("email");
+        //loginButton.setReadPermissions("user_status");
+        //loginButton.setReadPermissions(Arrays.asList(permissions));
         // If using in a fragment
+        loginButton.setReadPermissions(Arrays.asList("user_status","user_friends"));//user_friends
+
         loginButton.setFragment(this);
         // Other app specific specialization
 
@@ -60,29 +77,24 @@ public class LoginFB extends Fragment {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                tx_status.setText("Login berhasil.\n"+loginResult.getAccessToken());
+                tx_status.setText("Login success\n"+loginResult.getAccessToken());
             }
 
             @Override
             public void onCancel() {
-                //tx_status.setText("Login gagal.");
+                tx_status.setText("Login gagal.");
             }
 
             @Override
             public void onError(FacebookException error) {
-                //tx_status.setText(error.toString());
+                tx_status.setText("Error :\n"+error.toString());
             }
         });
 
 
 
-
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-            }
-        });
+        //otomatis cek login, seperti pada button.OnActionClick()
+        //LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
 
     }
 

@@ -36,13 +36,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        FacebookSdk.sdkInitialize(getApplicationContext());
+        StaticUtil.setContext(getApplicationContext());
+//-------------------------------------------------------------
+        /*FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
 
-        //callbackManager = CallbackManager.Factory.create();
-
-        StaticUtil.setContext(getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();*/
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
