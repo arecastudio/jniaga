@@ -14,31 +14,35 @@
             android:id="@+id/nav_pencarian"
             android:icon="@mipmap/ic_cari"
             android:title="Pencarian" />
-        <item
-            android:id="@+id/nav_terdekat"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/menu_iklan">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/nav_buat"
+                android:icon="@mipmap/ic_buat_post"
+                android:title="Buat baru"/>
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_list"
+                android:icon="@mipmap/ic_list_post"
+                android:title="Lihat post"/>
+            <item
+                android:id="@+id/nav_jadwal"
+                android:icon="@mipmap/ic_jadwal"
+                android:title="Atur jadwal"/>
+        </menu>
+    </item>
 
+    <item android:title="Personal">
+        <menu>
             <item
                 android:id="@+id/nav_login"
                 android:icon="@mipmap/ic_login"
                 android:title="Akun"/>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@mipmap/ic_bagikan"
+                android:title="Bagikan" />
         </menu>
     </item>
 

@@ -77,7 +77,8 @@ public class LoginFB extends Fragment {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                tx_status.setText("Login success\n"+loginResult.getAccessToken());
+                //String accessToken=loginResult.getAccessToken().getToken();
+                tx_status.setText("Login success\n"+loginResult.getAccessToken().getToken());
             }
 
             @Override
