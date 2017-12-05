@@ -19,6 +19,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
+import io.github.arecastudio.jniaga.fragments.BuatBaru;
 import io.github.arecastudio.jniaga.fragments.Cari;
 import io.github.arecastudio.jniaga.fragments.Kategori;
 import io.github.arecastudio.jniaga.fragments.LoginFB;
@@ -140,6 +141,10 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_login:
                 fm.beginTransaction().replace(R.id.MainFrame,new LoginFB()).commit();
+                break;
+            case R.id.nav_buat:
+                fm.beginTransaction().replace(R.id.MainFrame,new BuatBaru()).commit();
+                break;
             default:
         }
 
