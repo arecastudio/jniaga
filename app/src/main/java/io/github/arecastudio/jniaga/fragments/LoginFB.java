@@ -16,11 +16,17 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.widget.ProfilePictureView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +51,7 @@ public class LoginFB extends Fragment {
     private TextView tx_status;
     private Context context;
     private ProfilePictureView pictureView;
+    private String userId;
 
     private final String[] permissions={"publish_actions","email","user_status","public_profile"};
 
@@ -77,14 +84,33 @@ public class LoginFB extends Fragment {
 
         ProsesLogin();
 
-        CekStatus();
+        ifLogin();
 
         return view;
     }
 
-    private void CekStatus() {
+    private void ifLogin() {
         if (new Fungsi(context).isFbLoggedIn()){
+
             pictureView.setProfileId(AccessToken.getCurrentAccessToken().getUserId());
+
+            GraphRequest request=new GraphRequest().newMeRequest(AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                @Override
+                public void onCompleted(JSONObject object, GraphResponse response) {
+                    try {
+                        String nama=object.getString("name");
+                        //String email=object.getString("email");
+                        System.out.println("\n\n\n\n\n Nama Facebook "+nama);
+                        tx_status.setText(nama);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            });
+            Bundle parameters = new Bundle();
+            parameters.putString("fields", "id,name,email,gender, birthday");
+            request.setParameters(parameters);
+            request.executeAsync();
         }
     }
 
@@ -95,9 +121,10 @@ public class LoginFB extends Fragment {
             public void onSuccess(LoginResult loginResult) {
                 if (loginResult!=null){
                     //String accessToken=loginResult.getAccessToken().getToken();
-                    tx_status.setText("Login success\n"+loginResult.getAccessToken().getToken());
+                    //tx_status.setText("Login success\n"+loginResult.getAccessToken().getToken());
+                    tx_status.setText("Sukses.");
 
-                    String userId= loginResult.getAccessToken().getUserId();
+                    userId=loginResult.getAccessToken().getUserId();
                     pictureView.setProfileId(userId);
                 }
             }
@@ -113,19 +140,21 @@ public class LoginFB extends Fragment {
             }
         });
 
+        //otomatis cek perubahan akses token.
         AccessTokenTracker att=new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldToken, AccessToken currentToken) {
                 if (currentToken==null){
                     pictureView.setProfileId(null);
                     tx_status.setText("Status");
+                }else {
+                    //
                 }
             }
         };
 
         //otomatis cek login, seperti pada button.OnActionClick()
         //LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
-
     }
 
 

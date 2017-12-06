@@ -14,31 +14,43 @@
             android:id="@+id/nav_pencarian"
             android:icon="@mipmap/ic_cari"
             android:title="Pencarian" />
+
     </group>
+
 
     <item android:title="@string/menu_iklan">
         <menu>
-            <item
-                android:id="@+id/nav_buat"
-                android:icon="@mipmap/ic_buat_post"
-                android:title="Buat baru"/>
-            <item
-                android:id="@+id/nav_list"
-                android:icon="@mipmap/ic_list_post"
-                android:title="Lihat post"/>
-            <item
-                android:id="@+id/nav_jadwal"
-                android:icon="@mipmap/ic_jadwal"
-                android:title="Atur jadwal"/>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_buat"
+                    android:icon="@mipmap/ic_buat_post"
+                    android:title="Buat baru"/>
+                <item
+                    android:id="@+id/nav_list"
+                    android:icon="@mipmap/ic_list_post"
+                    android:title="Lihat post"/>
+                <item
+                    android:id="@+id/nav_jadwal"
+                    android:icon="@mipmap/ic_jadwal"
+                    android:title="Atur jadwal"/>
+            </group>
         </menu>
     </item>
 
     <item android:title="Personal">
         <menu>
-            <item
-                android:id="@+id/nav_login"
-                android:icon="@mipmap/ic_login"
-                android:title="Akun"/>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_login"
+                    android:icon="@mipmap/ic_login"
+                    android:checkableBehavior="single"
+                    android:title="Akun"/>
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="Publikasi">
+        <menu>
             <item
                 android:id="@+id/nav_share"
                 android:icon="@mipmap/ic_bagikan"
