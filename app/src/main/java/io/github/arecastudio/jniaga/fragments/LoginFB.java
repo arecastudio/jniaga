@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
+import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -18,12 +20,14 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.facebook.login.widget.ProfilePictureView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import io.github.arecastudio.jniaga.MainActivity;
+import io.github.arecastudio.jniaga.ctrl.Fungsi;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
@@ -40,6 +44,7 @@ public class LoginFB extends Fragment {
     private CallbackManager callbackManager;
     private TextView tx_status;
     private Context context;
+    private ProfilePictureView pictureView;
 
     private final String[] permissions={"publish_actions","email","user_status","public_profile"};
 
@@ -58,6 +63,8 @@ public class LoginFB extends Fragment {
         loginButton = (LoginButton) view.findViewById(R.id.login_button);
         tx_status=(TextView)view.findViewById(R.id.tx_status);
 
+        pictureView=(ProfilePictureView) view.findViewById(R.id.facebook_picture);
+
         callbackManager = CallbackManager.Factory.create();
         loginButton.setReadPermissions("email");
         //loginButton.setReadPermissions("user_status");
@@ -69,7 +76,16 @@ public class LoginFB extends Fragment {
         // Other app specific specialization
 
         ProsesLogin();
+
+        CekStatus();
+
         return view;
+    }
+
+    private void CekStatus() {
+        if (new Fungsi(context).isFbLoggedIn()){
+            pictureView.setProfileId(AccessToken.getCurrentAccessToken().getUserId());
+        }
     }
 
     private void ProsesLogin(){
@@ -77,8 +93,13 @@ public class LoginFB extends Fragment {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                //String accessToken=loginResult.getAccessToken().getToken();
-                tx_status.setText("Login success\n"+loginResult.getAccessToken().getToken());
+                if (loginResult!=null){
+                    //String accessToken=loginResult.getAccessToken().getToken();
+                    tx_status.setText("Login success\n"+loginResult.getAccessToken().getToken());
+
+                    String userId= loginResult.getAccessToken().getUserId();
+                    pictureView.setProfileId(userId);
+                }
             }
 
             @Override
@@ -92,7 +113,15 @@ public class LoginFB extends Fragment {
             }
         });
 
-
+        AccessTokenTracker att=new AccessTokenTracker() {
+            @Override
+            protected void onCurrentAccessTokenChanged(AccessToken oldToken, AccessToken currentToken) {
+                if (currentToken==null){
+                    pictureView.setProfileId(null);
+                    tx_status.setText("Status");
+                }
+            }
+        };
 
         //otomatis cek login, seperti pada button.OnActionClick()
         //LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));

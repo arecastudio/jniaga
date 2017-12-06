@@ -8,6 +8,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.facebook.AccessToken;
+
 import org.apache.http.util.ByteArrayBuffer;
 
 import java.io.BufferedInputStream;
@@ -80,5 +82,10 @@ public class Fungsi {
             }
         }
         catch(Exception ex){}
+    }
+
+    public boolean isFbLoggedIn(){
+        AccessToken accessToken=AccessToken.getCurrentAccessToken();
+        return accessToken !=null;
     }
 }
