@@ -1,5 +1,6 @@
 package io.github.arecastudio.jniaga.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,9 +31,12 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import io.github.arecastudio.jniaga.MainActivity;
+import io.github.arecastudio.jniaga.activities.PermissionActivity;
 import io.github.arecastudio.jniaga.ctrl.Fungsi;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 
@@ -73,11 +77,16 @@ public class LoginFB extends Fragment {
         pictureView=(ProfilePictureView) view.findViewById(R.id.facebook_picture);
 
         callbackManager = CallbackManager.Factory.create();
-        loginButton.setReadPermissions("email");
+        //loginButton.setReadPermissions("publish_actions");
         //loginButton.setReadPermissions("user_status");
         //loginButton.setReadPermissions(Arrays.asList(permissions));
         // If using in a fragment
-        loginButton.setReadPermissions(Arrays.asList("user_status","user_friends"));//user_friends
+        loginButton.setReadPermissions(Arrays.asList("email","user_status","public_profile","user_friends"));//user_friends
+
+        //loginButton.setPublishPermissions(Arrays.asList("publish_actions"));
+        ///////
+        
+        ///////
 
         loginButton.setFragment(this);
         // Other app specific specialization
@@ -126,6 +135,9 @@ public class LoginFB extends Fragment {
 
                     userId=loginResult.getAccessToken().getUserId();
                     pictureView.setProfileId(userId);
+
+                    Intent intent=new Intent(getContext(), PermissionActivity.class);
+                    startActivity(intent);
                 }
             }
 

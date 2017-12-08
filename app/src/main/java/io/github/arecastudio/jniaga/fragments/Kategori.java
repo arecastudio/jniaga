@@ -1,10 +1,6 @@
 package io.github.arecastudio.jniaga.fragments;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,20 +13,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import io.github.arecastudio.jniaga.R;
 import io.github.arecastudio.jniaga.adapters.KategoriAdapter;
-import io.github.arecastudio.jniaga.ctrl.Fungsi;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 import io.github.arecastudio.jniaga.model.DataKategori;
-import io.github.arecastudio.jniaga.trans.KategoriTransmitter;
+import io.github.arecastudio.jniaga.trans.TerimaKategori;
 
 /**
  * Created by android on 12/1/17.
@@ -48,7 +38,7 @@ public class Kategori extends Fragment {
 
     private void GetData(){
         JSONObject object=new JSONObject();
-        KategoriTransmitter trs=new KategoriTransmitter(context);
+        TerimaKategori trs=new TerimaKategori(context);
         trs.execute(new JSONObject[]{object});
 
         JSONObject json=new JSONObject();
@@ -68,19 +58,11 @@ public class Kategori extends Fragment {
                     json=array.getJSONObject(i);
 
                     DataKategori dk=new DataKategori();
-                    dk.setId(i);
+                    dk.setId(json.getInt("id"));
                     dk.setNama(json.getString("nama"));
-                    //dk.setIcon(R.mipmap.ic_terbaru);
 
-                    System.out.println(json.getString("icon"));
-
-                    //URL urlImg=new URL(json.getString("icon"));
-                    //Bitmap bitmap= BitmapFactory.decodeStream(urlImg.openConnection().getInputStream());
-
-                    //Bitmap bitmap=new Fungsi(context).DownloadFullFromUrl(json.getString("icon"));
-
-                    dk.setIcon(json.getString("icon"));
-
+                    String url_icon=StaticUtil.getWebUrl()+"assets/icons/kategori/"+json.getString("id")+".png";
+                    dk.setIcon(url_icon);
                     data.add(dk);
                 }
             } catch (JSONException e) {

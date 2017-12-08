@@ -15,7 +15,7 @@ public class StaticUtil {
     }
 
     public static String getWebUrl() {
-        StaticUtil.webUrl="http://10.0.2.2/projects/jniaga/api/";
+        StaticUtil.webUrl="http://10.0.2.2/projects/jniaga/";
         return webUrl;
     }
 

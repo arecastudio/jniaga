@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity
 
         fm=getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.MainFrame,new Terbaru()).commit();
-
+        setTitle("Postingan Terbaru");
     }
 
     @Override
@@ -131,6 +131,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (id){
             case R.id.nav_terbaru:
+                setTitle("Postingan Terbaru");
                 fm.beginTransaction().replace(R.id.MainFrame,new Terbaru()).commit();
                 break;
             case R.id.nav_kategori:
@@ -143,6 +144,7 @@ public class MainActivity extends AppCompatActivity
                 fm.beginTransaction().replace(R.id.MainFrame,new LoginFB()).commit();
                 break;
             case R.id.nav_buat:
+                setTitle("Buat Iklan baru");
                 fm.beginTransaction().replace(R.id.MainFrame,new BuatBaru()).commit();
                 break;
             default:
