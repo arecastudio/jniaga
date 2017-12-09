@@ -1,7 +1,14 @@
 package io.github.arecastudio.jniaga.trans;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
+import android.view.WindowManager;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -17,7 +24,10 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import io.github.arecastudio.jniaga.MainActivity;
+import io.github.arecastudio.jniaga.R;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
+import io.github.arecastudio.jniaga.fragments.BuatBaru;
 
 /**
  * Created by android on 12/8/17.
@@ -29,6 +39,7 @@ public class KirimIklan extends AsyncTask<JSONObject,JSONObject,JSONObject> {
     private JSONObject jsonResponse;
     private JSONObject json;
     private JSONArray array;
+    private ProgressDialog dialog;
 
     public KirimIklan(Context context){
         this.context=context;
@@ -55,7 +66,17 @@ public class KirimIklan extends AsyncTask<JSONObject,JSONObject,JSONObject> {
             String resFromServer = org.apache.http.util.EntityUtils.toString(response.getEntity());
 
             jsonResponse=new JSONObject(resFromServer);
-            System.out.println("Hasil "+jsonResponse.getString("hasil"));
+
+            String hasil=jsonResponse.getString("hasil");
+            String msg="Gagal memposting iklan ke JNiaga.";
+            if (hasil.equals("true")){
+                msg="Berhasil memposting iklan ke JNiaga.";
+            }
+
+            System.out.println("Hasil : "+hasil);
+            //Toast.makeText(StaticUtil.getContext(),msg,Toast.LENGTH_SHORT).show();
+            //tampilkan return value di parent class BuatBaru.java, ketika pemanggilan child class ini
+
         } catch (Exception e) {
             e.printStackTrace();
         }

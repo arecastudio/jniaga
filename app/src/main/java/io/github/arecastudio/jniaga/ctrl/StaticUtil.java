@@ -9,13 +9,43 @@ import android.content.Context;
 public class StaticUtil {
     private static boolean isLogin;
     private static Context context;
-    private static String webUrl="http://139.59.241.190/api/jniaga/";
+    private static final String webUrl="http://139.59.241.190/jniaga/";
+    //Jayapura Niaga Group --> 905230449656779
+    //Jayapura Dagang Group 731228637011358
+    private static final String goupId="905230449656779";
+    private static String UserId="";
+    private static String UserName;
+
+    public static void ResetAll(){
+        UserId="";
+        UserName="";
+    }
 
     public StaticUtil(){
     }
 
+    public static String getUserName() {
+        return UserName;
+    }
+
+    public static void setUserName(String userName) {
+        UserName = userName;
+    }
+
+    public static String getGoupId() {
+        return goupId;
+    }
+
+    public static String getUserId() {
+        return UserId;
+    }
+
+    public static void setUserId(String userId) {
+        UserId = userId;
+    }
+
     public static String getWebUrl() {
-        StaticUtil.webUrl="http://10.0.2.2/projects/jniaga/";
+        //StaticUtil.webUrl="http://10.0.2.2/projects/jniaga/";
         return webUrl;
     }
 

@@ -109,8 +109,11 @@ public class LoginFB extends Fragment {
                     try {
                         String nama=object.getString("name");
                         //String email=object.getString("email");
-                        System.out.println("\n\n\n\n\n Nama Facebook "+nama);
+                        System.out.println("Nama Facebook "+nama);
                         tx_status.setText(nama);
+
+                        StaticUtil.setUserId(object.getString("id"));
+                        StaticUtil.setUserName(object.getString("name"));
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -120,6 +123,8 @@ public class LoginFB extends Fragment {
             parameters.putString("fields", "id,name,email,gender, birthday");
             request.setParameters(parameters);
             request.executeAsync();
+        }else {
+            StaticUtil.ResetAll();
         }
     }
 
@@ -136,14 +141,18 @@ public class LoginFB extends Fragment {
                     userId=loginResult.getAccessToken().getUserId();
                     pictureView.setProfileId(userId);
 
-                    Intent intent=new Intent(getContext(), PermissionActivity.class);
-                    startActivity(intent);
+                    StaticUtil.setUserId(userId);
+                    //StaticUtil.setUserName(loginResult.getAccessToken().));
+
+                    //Intent intent=new Intent(getContext(), PermissionActivity.class);
+                    //startActivity(intent);
                 }
             }
 
             @Override
             public void onCancel() {
                 tx_status.setText("Login gagal.");
+                StaticUtil.ResetAll();
             }
 
             @Override

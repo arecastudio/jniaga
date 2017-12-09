@@ -1,5 +1,6 @@
 package io.github.arecastudio.jniaga;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        StaticUtil.setContext(getApplicationContext());
+        StaticUtil.setContext(this);
 //-------------------------------------------------------------
         /*FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
@@ -135,9 +136,11 @@ public class MainActivity extends AppCompatActivity
                 fm.beginTransaction().replace(R.id.MainFrame,new Terbaru()).commit();
                 break;
             case R.id.nav_kategori:
+                setTitle("Kategori");
                 fm.beginTransaction().replace(R.id.MainFrame,new Kategori()).commit();
                 break;
             case R.id.nav_pencarian:
+                setTitle("Pencarian");
                 fm.beginTransaction().replace(R.id.MainFrame,new Cari()).commit();
                 break;
             case R.id.nav_login:

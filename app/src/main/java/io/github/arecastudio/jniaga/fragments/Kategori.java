@@ -30,9 +30,11 @@ public class Kategori extends Fragment {
     private GridView grid;
     private ArrayList data;
     private Context context;
+    private boolean isConnected;
 
     public Kategori(){
         context=StaticUtil.getContext();
+        isConnected=true;
         GetData();
     }
 
@@ -74,24 +76,33 @@ public class Kategori extends Fragment {
 
 
         }else {
-            data=new ArrayList<DataKategori>();
+            /*data=new ArrayList<DataKategori>();
             for (int i=1;i<=3;i++){
                 DataKategori dk=new DataKategori();
                 dk.setId(i);
                 dk.setNama("Kategori "+i);
-                //dk.setIcon(R.mipmap.ic_cari);
 
                 data.add(dk);
-            }
+            }*/
+
+            isConnected=false;
         }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=(View)inflater.inflate(R.layout.frame_kategori,container,false);
-        grid=(GridView)view.findViewById(R.id.gridKategori);
-        grid.setAdapter(new KategoriAdapter(StaticUtil.getContext(),data));
+        int layId=0;
+        View view=null;
+        if(isConnected){
+            layId=R.layout.frame_kategori;
+            view=(View)inflater.inflate(layId,container,false);
+            grid=(GridView)view.findViewById(R.id.gridKategori);
+            grid.setAdapter(new KategoriAdapter(StaticUtil.getContext(),data));
+        }else {
+            layId=R.layout.frame_diskonek;
+            view=(View)inflater.inflate(layId,container,false);
+        }
         return view;
     }
 }

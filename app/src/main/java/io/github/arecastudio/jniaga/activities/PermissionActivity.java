@@ -56,6 +56,7 @@ public class PermissionActivity extends FragmentActivity {
             @Override
             public void onCancel() {
                 System.out.println("Login batal.");
+                finish();
             }
 
             @Override

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -24,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Judul iklan..."
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="20dp"
             android:id="@+id/edit_judul_iklan"/>
 
         <TextView
@@ -36,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Isi iklan..."
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="20dp"
             android:ems="10"
             android:inputType="textMultiLine"
             android:id="@+id/edit_isi_iklan"/>
@@ -49,16 +50,22 @@
         <Spinner
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="20dp"
             android:id="@+id/spinner_jenis_iklan"
             />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Posting"
-            android:id="@+id/bt_post"/>
+            android:text="Gambar 1"
+            android:id="@+id/button_camera1"/>
+            android:text="Posting"/>
+
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/bt_post"
+            app:srcCompat="@drawable/ic_menu_send" />
 
     </LinearLayout>
 
