@@ -1,9 +1,13 @@
 package io.github.arecastudio.jniaga.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PaintDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -30,6 +34,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,16 +60,28 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
     private Fungsi fungsi;
     private EditText edit_isi_iklan;
     private EditText edit_judul_iklan;
+    private EditText edit_harga;
     //private TextView txTitle;
     private Spinner cbx_jenis_iklan;
     private int id_jenis_iklan;
     private Bundle bundle;
 
-    private ImageButton bt_post;
+    private Button bt_post;
     private Button bt_cam1;
+    private Button bt_cam2;
+    private Button bt_cam3;
+    private int baseColor;
+
+    private TextView tx_gambar1;
+    private TextView tx_gambar2;
+    private TextView tx_gambar3;
 
     //picture takken
     private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int GAMBAR1 = 11;
+    private static final int GAMBAR2 = 12;
+    private static final int GAMBAR3 = 13;
+
 
     private final List<String> lists=Arrays.asList("publish_actions");
     private AccessToken accToken=null;
@@ -84,14 +102,28 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
             //txTitle=(TextView)view.findViewById(R.id.tx_title);
             edit_isi_iklan=(EditText)view.findViewById(R.id.edit_isi_iklan);
             edit_judul_iklan=(EditText)view.findViewById(R.id.edit_judul_iklan);
+            edit_harga=(EditText)view.findViewById(R.id.edit_harga);
 
             cbx_jenis_iklan=(Spinner)view.findViewById(R.id.spinner_jenis_iklan);
 
-            bt_post=(ImageButton)view.findViewById(R.id.bt_post);
+            bt_post=(Button)view.findViewById(R.id.bt_post);
             bt_post.setOnClickListener(this);
 
             bt_cam1=(Button)view.findViewById(R.id.button_camera1);
             bt_cam1.setOnClickListener(this);
+
+            //Drawable drawable = (Drawable) bt_cam1.getBackground();
+            baseColor=bt_cam1.getCurrentTextColor();
+
+            bt_cam2=(Button)view.findViewById(R.id.button_camera2);
+            bt_cam2.setOnClickListener(this);
+
+            bt_cam3=(Button)view.findViewById(R.id.button_camera3);
+            bt_cam3.setOnClickListener(this);
+
+            tx_gambar1=(TextView)view.findViewById(R.id.tx_gambar1);
+            tx_gambar2=(TextView)view.findViewById(R.id.tx_gambar2);
+            tx_gambar3=(TextView)view.findViewById(R.id.tx_gambar3);
 
             Inits();
         }else {
@@ -178,6 +210,7 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        Intent intent=null;
         switch (v.getId()){
             case R.id.bt_post:
                 if (AccessToken.getCurrentAccessToken()!=null){
@@ -203,28 +236,26 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
 
                         //System.out.println("tombol");
 
-                        Thread thread=new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                //
-                                try {
-                                    JSONObject jo = new JSONObject();
-                                    jo.put("sql_iklan", "INSERT IGNORE INTO");
-                                    jo.put("judul",edit_judul_iklan.getText().toString().trim());
-                                    jo.put("isi",edit_isi_iklan.getText().toString().trim());
-                                    jo.put("id_kategori",id_jenis_iklan);
-                                    jo.put("user_id",AccessToken.getCurrentAccessToken().getUserId()+"");
-                                    KirimIklan ki = new KirimIklan(context);
-                                    ki.execute(jo);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                        thread.start();
                         try {
-                            thread.join();
-                        } catch (InterruptedException e) {
+                            JSONObject jo = new JSONObject();
+                            jo.put("sql_iklan", "INSERT IGNORE INTO");
+                            jo.put("judul",edit_judul_iklan.getText().toString().trim().toUpperCase());
+                            jo.put("isi",edit_isi_iklan.getText().toString().trim());
+                            jo.put("id_kategori",id_jenis_iklan);
+                            jo.put("user_id",AccessToken.getCurrentAccessToken().getUserId()+"");
+                            jo.put("harga",Double.parseDouble(edit_harga.getText().toString().trim()));
+                            KirimIklan ki = new KirimIklan(context);
+                            ki.execute(jo);
+
+                            JSONObject ret=ki.get();
+                            String hasil=ret.getString("hasil");
+                            if (hasil.equals("true")){
+                                Toast.makeText(context,"Data berhasil dipublish.",Toast.LENGTH_SHORT).show();
+                                Refresh();
+                            }else {
+                                Toast.makeText(context,"Data gagal dipublish.",Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 
@@ -240,10 +271,26 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.button_camera1:
-                Intent intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                /*Intent intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (intent.resolveActivity(context.getPackageManager())!=null){
                     startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-                }
+                }*/
+                intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), GAMBAR1);
+                break;
+            case R.id.button_camera2:
+                intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), GAMBAR2);
+                break;
+            case R.id.button_camera3:
+                intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), GAMBAR3);
                 break;
             default:
         }
@@ -253,9 +300,72 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
         boolean ret=false;
         if (edit_judul_iklan.getText().toString().trim().length()>0
                 && edit_isi_iklan.getText().toString().trim().length()>0
+                && edit_harga.getText().toString().trim().length()>0
                 && id_jenis_iklan>0){
             ret=true;
         }
         return ret;
+    }
+
+    private void Refresh(){
+        id_jenis_iklan=0;
+        edit_judul_iklan.setText("");
+        edit_isi_iklan.setText("");
+        edit_harga.setText("");
+        edit_judul_iklan.requestFocus();
+
+        bt_cam1.setTextColor(baseColor);
+        bt_cam2.setTextColor(baseColor);
+        bt_cam3.setTextColor(baseColor);
+
+        tx_gambar1.setText("");
+        tx_gambar2.setText("");
+        tx_gambar3.setText("");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode==GAMBAR1 && resultCode== Activity.RESULT_OK){
+            if (data!=null){
+                try{
+                    InputStream instr = context.getContentResolver().openInputStream(data.getData());
+                    Uri imgUri = data.getData();
+                    String picturePath = imgUri.getPath();
+
+                    bt_cam1.setTextColor(Color.BLUE);
+                    tx_gambar1.setText("Gambar 1 dipilih");
+                    System.out.println(data+"");
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (requestCode==GAMBAR2 && resultCode== Activity.RESULT_OK){
+            if (data!=null){
+                try{
+                    InputStream instr = context.getContentResolver().openInputStream(data.getData());
+                    bt_cam2.setTextColor(Color.BLUE);
+                    tx_gambar2.setText("Gambar 2 dipilih");
+                    System.out.println(data+"");
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (requestCode==GAMBAR3 && resultCode== Activity.RESULT_OK){
+            if (data!=null){
+                try{
+                    InputStream instr = context.getContentResolver().openInputStream(data.getData());
+                    bt_cam3.setTextColor(Color.BLUE);
+                    tx_gambar3.setText("Gambar 3 dipilih");
+                    System.out.println(data+"");
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

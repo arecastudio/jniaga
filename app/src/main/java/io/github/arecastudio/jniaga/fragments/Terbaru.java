@@ -46,7 +46,7 @@ public class Terbaru extends Fragment {
 
         try {
             JSONArray array=tt.get();
-            if (array.length()>0){
+            if (array!=null){
                 data=new ArrayList<DataIklan>();
                 for (int i=0;i<array.length();i++){
                     json=array.getJSONObject(i);

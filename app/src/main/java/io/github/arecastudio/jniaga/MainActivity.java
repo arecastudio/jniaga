@@ -144,6 +144,7 @@ public class MainActivity extends AppCompatActivity
                 fm.beginTransaction().replace(R.id.MainFrame,new Cari()).commit();
                 break;
             case R.id.nav_login:
+                setTitle("Login akun");
                 fm.beginTransaction().replace(R.id.MainFrame,new LoginFB()).commit();
                 break;
             case R.id.nav_buat:

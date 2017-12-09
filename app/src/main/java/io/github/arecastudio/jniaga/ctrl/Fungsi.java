@@ -88,4 +88,6 @@ public class Fungsi {
         AccessToken accessToken=AccessToken.getCurrentAccessToken();
         return accessToken !=null;
     }
+
+
 }

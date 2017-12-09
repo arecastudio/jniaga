@@ -54,18 +54,68 @@
             android:id="@+id/spinner_jenis_iklan"
             />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Gambar 1"
-            android:id="@+id/button_camera1"/>
-            android:text="Posting"/>
-
-        <ImageButton
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Harga"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/edit_harga"
+            android:hint="Harga..."
+            android:ems="10"
+            android:inputType="number" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="3dp"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/button_camera1"
+                android:text="Gambar 1"
+                android:drawableTop="@drawable/ic_menu_camera"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/button_camera2"
+                android:text="Gambar 2"
+                android:drawableTop="@drawable/ic_menu_camera"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/button_camera3"
+                android:text="Gambar 3"
+                android:drawableTop="@drawable/ic_menu_camera"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tx_gambar1"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tx_gambar2"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tx_gambar3"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:padding="20dp"
             android:id="@+id/bt_post"
-            app:srcCompat="@drawable/ic_menu_send" />
+            android:text="Posting"
+            android:drawableTop="@drawable/ic_menu_send"/>
 
     </LinearLayout>
 

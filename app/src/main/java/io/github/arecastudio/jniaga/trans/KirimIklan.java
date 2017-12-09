@@ -73,7 +73,7 @@ public class KirimIklan extends AsyncTask<JSONObject,JSONObject,JSONObject> {
                 msg="Berhasil memposting iklan ke JNiaga.";
             }
 
-            System.out.println("Hasil : "+hasil);
+            //System.out.println("Hasil : "+msg);
             //Toast.makeText(StaticUtil.getContext(),msg,Toast.LENGTH_SHORT).show();
             //tampilkan return value di parent class BuatBaru.java, ketika pemanggilan child class ini
 
