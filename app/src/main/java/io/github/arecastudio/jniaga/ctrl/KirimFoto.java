@@ -5,6 +5,7 @@ import android.util.Log;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,10 +19,10 @@ public class KirimFoto {
     public KirimFoto(){
 
     }
-    public int uploadFile(String sourceFileUri,String ipServer) {
+    public int uploadFile(InputStream fis, String fileName) {
         final String LOGS="Kirim FOTO";
-        String fileName = sourceFileUri;
-        String link=ipServer+"pages/upload_foto.php";
+        //String fileName = sourceFileUri;
+        String link=StaticUtil.getWebUrl()+"pages/upload_foto.php";
 
         HttpURLConnection conn = null;
         DataOutputStream dos = null;
@@ -31,16 +32,16 @@ public class KirimFoto {
         int bytesRead, bytesAvailable, bufferSize;
         byte[] buffer;
         int maxBufferSize = 1 * 1024 * 1024;
-        File sourceFile = new File(sourceFileUri);
+        //File sourceFile = new File(sourceFileUri);
         int serverResponseCode=0;
 
-        if (!sourceFile.isFile()) {
+        if (fis==null) {
             return 0;
         }else{
             try {
-                Log.e(LOGS,sourceFileUri.toString());
+                //Log.e(LOGS,sourceFileUri.toString());
                 // open a URL connection to the Servlet
-                FileInputStream fileInputStream = new FileInputStream(sourceFile);
+                InputStream fileInputStream = fis;//new FileInputStream(sourceFile);
                 URL url = new URL(link);//upload_foto.php
 
                 // Open a HTTP  connection to  the URL

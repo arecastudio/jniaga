@@ -34,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ import io.github.arecastudio.jniaga.R;
 import io.github.arecastudio.jniaga.activities.PermissionActivity;
 import io.github.arecastudio.jniaga.ctrl.Fungsi;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
+import io.github.arecastudio.jniaga.model.DataFoto;
 import io.github.arecastudio.jniaga.model.DataKategori;
 import io.github.arecastudio.jniaga.trans.KirimIklan;
 import io.github.arecastudio.jniaga.trans.TerimaKategori;
@@ -82,6 +84,9 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
     private static final int GAMBAR2 = 12;
     private static final int GAMBAR3 = 13;
 
+    private InputStream inputStream1;
+    private InputStream inputStream2;
+    private InputStream inputStream3;
 
     private final List<String> lists=Arrays.asList("publish_actions");
     private AccessToken accToken=null;
@@ -236,6 +241,15 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
 
                         //System.out.println("tombol");
 
+                        List<InputStream> streamList=new ArrayList<>();
+
+                        InputStream[]is={inputStream1,inputStream2,inputStream3};
+                        for (InputStream i: is) {
+                            if (i!=null){
+                                streamList.add(i);
+                            }
+                        }
+
                         try {
                             JSONObject jo = new JSONObject();
                             jo.put("sql_iklan", "INSERT IGNORE INTO");
@@ -244,6 +258,7 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                             jo.put("id_kategori",id_jenis_iklan);
                             jo.put("user_id",AccessToken.getCurrentAccessToken().getUserId()+"");
                             jo.put("harga",Double.parseDouble(edit_harga.getText().toString().trim()));
+                            jo.put("streams",streamList);
                             KirimIklan ki = new KirimIklan(context);
                             ki.execute(jo);
 
@@ -321,20 +336,29 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
         tx_gambar1.setText("");
         tx_gambar2.setText("");
         tx_gambar3.setText("");
+
+        inputStream1=null;
+        inputStream2=null;
+        inputStream3=null;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        final int LIMIT_SIZE=600000;
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode==GAMBAR1 && resultCode== Activity.RESULT_OK){
             if (data!=null){
                 try{
                     InputStream instr = context.getContentResolver().openInputStream(data.getData());
+                    //FileInputStream fis=context.getClass().getClassLoader().getResourceAsStream(data.getData());
                     Uri imgUri = data.getData();
                     String picturePath = imgUri.getPath();
 
+                    DataFoto dataFoto=fungsi.dumpImageMetaData(imgUri);
+
                     bt_cam1.setTextColor(Color.BLUE);
-                    tx_gambar1.setText("Gambar 1 dipilih");
+                    tx_gambar1.setText("Gambar "+dataFoto.getNama()+" dipilih");
+
                     System.out.println(data+"");
                 }catch (Exception e){
                     e.printStackTrace();
