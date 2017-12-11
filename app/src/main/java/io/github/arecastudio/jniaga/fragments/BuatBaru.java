@@ -40,6 +40,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import bolts.Task;
@@ -47,6 +48,7 @@ import io.github.arecastudio.jniaga.MainActivity;
 import io.github.arecastudio.jniaga.R;
 import io.github.arecastudio.jniaga.activities.PermissionActivity;
 import io.github.arecastudio.jniaga.ctrl.Fungsi;
+import io.github.arecastudio.jniaga.ctrl.KirimFoto;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 import io.github.arecastudio.jniaga.model.DataFoto;
 import io.github.arecastudio.jniaga.model.DataKategori;
@@ -88,6 +90,10 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
     private InputStream inputStream2;
     private InputStream inputStream3;
 
+    private DataFoto df1;
+    private DataFoto df2;
+    private DataFoto df3;
+
     private final List<String> lists=Arrays.asList("publish_actions");
     private AccessToken accToken=null;
 
@@ -103,34 +109,38 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=null;
         if (fungsi.cekKoneksi()){
-            view=inflater.inflate(R.layout.frame_baru,container,false);
-            //txTitle=(TextView)view.findViewById(R.id.tx_title);
-            edit_isi_iklan=(EditText)view.findViewById(R.id.edit_isi_iklan);
-            edit_judul_iklan=(EditText)view.findViewById(R.id.edit_judul_iklan);
-            edit_harga=(EditText)view.findViewById(R.id.edit_harga);
+            if (AccessToken.getCurrentAccessToken()!=null){
+                view=inflater.inflate(R.layout.frame_baru,container,false);
+                //txTitle=(TextView)view.findViewById(R.id.tx_title);
+                edit_isi_iklan=(EditText)view.findViewById(R.id.edit_isi_iklan);
+                edit_judul_iklan=(EditText)view.findViewById(R.id.edit_judul_iklan);
+                edit_harga=(EditText)view.findViewById(R.id.edit_harga);
 
-            cbx_jenis_iklan=(Spinner)view.findViewById(R.id.spinner_jenis_iklan);
+                cbx_jenis_iklan=(Spinner)view.findViewById(R.id.spinner_jenis_iklan);
 
-            bt_post=(Button)view.findViewById(R.id.bt_post);
-            bt_post.setOnClickListener(this);
+                bt_post=(Button)view.findViewById(R.id.bt_post);
+                bt_post.setOnClickListener(this);
 
-            bt_cam1=(Button)view.findViewById(R.id.button_camera1);
-            bt_cam1.setOnClickListener(this);
+                bt_cam1=(Button)view.findViewById(R.id.button_camera1);
+                bt_cam1.setOnClickListener(this);
 
-            //Drawable drawable = (Drawable) bt_cam1.getBackground();
-            baseColor=bt_cam1.getCurrentTextColor();
+                //Drawable drawable = (Drawable) bt_cam1.getBackground();
+                baseColor=bt_cam1.getCurrentTextColor();
 
-            bt_cam2=(Button)view.findViewById(R.id.button_camera2);
-            bt_cam2.setOnClickListener(this);
+                bt_cam2=(Button)view.findViewById(R.id.button_camera2);
+                bt_cam2.setOnClickListener(this);
 
-            bt_cam3=(Button)view.findViewById(R.id.button_camera3);
-            bt_cam3.setOnClickListener(this);
+                bt_cam3=(Button)view.findViewById(R.id.button_camera3);
+                bt_cam3.setOnClickListener(this);
 
-            tx_gambar1=(TextView)view.findViewById(R.id.tx_gambar1);
-            tx_gambar2=(TextView)view.findViewById(R.id.tx_gambar2);
-            tx_gambar3=(TextView)view.findViewById(R.id.tx_gambar3);
+                tx_gambar1=(TextView)view.findViewById(R.id.tx_gambar1);
+                tx_gambar2=(TextView)view.findViewById(R.id.tx_gambar2);
+                tx_gambar3=(TextView)view.findViewById(R.id.tx_gambar3);
 
-            Inits();
+                Inits();
+            }else {
+                view=inflater.inflate(R.layout.frame_notlogin,container,false);
+            }
         }else {
             view=inflater.inflate(R.layout.frame_diskonek,container,false);
         }
@@ -240,27 +250,34 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                         */
 
                         //System.out.println("tombol");
-
-                        List<InputStream> streamList=new ArrayList<>();
-
-                        InputStream[]is={inputStream1,inputStream2,inputStream3};
-                        for (InputStream i: is) {
-                            if (i!=null){
-                                streamList.add(i);
-                            }
-                        }
-
+                        DataFoto[]dataFotos={df1,df2,df3};
+                        //==============================
                         try {
-                            JSONObject jo = new JSONObject();
-                            jo.put("sql_iklan", "INSERT IGNORE INTO");
+                            //List<DataFoto>list=new ArrayList<>();
+                            JSONArray array=new JSONArray();
+                            for (DataFoto dfs:dataFotos){
+                                if (dfs!=null){
+                                    //list.add(dfs);
+                                    JSONObject  job=new JSONObject();
+                                    job.put("nama",dfs.getUuidNama()+".jpg");
+                                    array.put(job);
+                                }
+                            }
+                            //=====================================================================
+
+                            JSONObject jo=new JSONObject();
+                            JSONObject jl=new JSONObject();
+
                             jo.put("judul",edit_judul_iklan.getText().toString().trim().toUpperCase());
                             jo.put("isi",edit_isi_iklan.getText().toString().trim());
                             jo.put("id_kategori",id_jenis_iklan);
                             jo.put("user_id",AccessToken.getCurrentAccessToken().getUserId()+"");
                             jo.put("harga",Double.parseDouble(edit_harga.getText().toString().trim()));
-                            jo.put("streams",streamList);
+                            jo.put("foto2",array);
+
+                            jl.put("data_foto",dataFotos);
                             KirimIklan ki = new KirimIklan(context);
-                            ki.execute(jo);
+                            ki.execute(jo,jl);
 
                             JSONObject ret=ki.get();
                             String hasil=ret.getString("hasil");
@@ -291,23 +308,104 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                     startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
                 }*/
                 intent = new Intent();
-                intent.setType("image/*");
+                intent.setType("image/jpeg");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), GAMBAR1);
+                startActivityForResult(Intent.createChooser(intent, "Pilih Gambar (*.JPG)"), GAMBAR1);
                 break;
             case R.id.button_camera2:
                 intent = new Intent();
-                intent.setType("image/*");
+                intent.setType("image/jpeg");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), GAMBAR2);
+                startActivityForResult(Intent.createChooser(intent, "Pilih Gambar (*.JPG)"), GAMBAR2);
                 break;
             case R.id.button_camera3:
                 intent = new Intent();
-                intent.setType("image/*");
+                intent.setType("image/jpeg");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), GAMBAR3);
+                startActivityForResult(Intent.createChooser(intent, "Pilih Gambar (*.JPG)"), GAMBAR3);
                 break;
             default:
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        final int LIMIT_SIZE=1000000;
+        final String LIMITED_SIZE="Ukuran gambar terlalu besar.";
+        String uuid=UUID.randomUUID().toString();
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode==GAMBAR1 && resultCode== Activity.RESULT_OK){
+            if (data!=null){
+                try{
+                    InputStream instr = context.getContentResolver().openInputStream(data.getData());
+                    //FileInputStream fis=context.getClass().getClassLoader().getResourceAsStream(data.getData());
+                    Uri imgUri = data.getData();
+                    String picturePath = imgUri.getPath();
+
+                    df1=fungsi.dumpImageMetaData(imgUri);
+                    if(df1.getUkuran()<=LIMIT_SIZE){
+                        df1.setFis((FileInputStream)instr);
+
+                        bt_cam1.setTextColor(Color.BLUE);
+                        tx_gambar1.setText("Gambar "+df1.getNama()+" dipilih");
+                    }else {
+                        df1=null;
+                        tx_gambar1.setText(LIMITED_SIZE);
+                    }
+
+                    //inputStream1=instr;
+
+                    //System.out.println(data+"\n"+uuid);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (requestCode==GAMBAR2 && resultCode== Activity.RESULT_OK){
+            if (data!=null){
+                try{
+                    InputStream instr = context.getContentResolver().openInputStream(data.getData());
+                    Uri imgUri = data.getData();
+                    String picturePath = imgUri.getPath();
+
+                    df2=fungsi.dumpImageMetaData(imgUri);
+                    if (df2.getUkuran()<=LIMIT_SIZE){
+
+                        df2.setFis((FileInputStream)instr);
+
+                        bt_cam2.setTextColor(Color.BLUE);
+                        tx_gambar2.setText("Gambar "+df2.getNama()+" dipilih");
+                    }else {
+                        df2=null;
+                        tx_gambar2.setText(LIMITED_SIZE);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (requestCode==GAMBAR3 && resultCode== Activity.RESULT_OK){
+            if (data!=null){
+                try{
+                    InputStream instr = context.getContentResolver().openInputStream(data.getData());
+                    Uri imgUri = data.getData();
+                    String picturePath = imgUri.getPath();
+
+                    df3=fungsi.dumpImageMetaData(imgUri);
+                    if (df3.getUkuran()<=LIMIT_SIZE){
+                        df3.setFis((FileInputStream)instr);
+                        bt_cam3.setTextColor(Color.BLUE);
+                        tx_gambar3.setText("Gambar "+df3.getNama()+" dipilih");
+                    }else {
+                        df3=null;
+                        tx_gambar3.setText(LIMITED_SIZE);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -340,56 +438,9 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
         inputStream1=null;
         inputStream2=null;
         inputStream3=null;
-    }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        final int LIMIT_SIZE=600000;
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==GAMBAR1 && resultCode== Activity.RESULT_OK){
-            if (data!=null){
-                try{
-                    InputStream instr = context.getContentResolver().openInputStream(data.getData());
-                    //FileInputStream fis=context.getClass().getClassLoader().getResourceAsStream(data.getData());
-                    Uri imgUri = data.getData();
-                    String picturePath = imgUri.getPath();
-
-                    DataFoto dataFoto=fungsi.dumpImageMetaData(imgUri);
-
-                    bt_cam1.setTextColor(Color.BLUE);
-                    tx_gambar1.setText("Gambar "+dataFoto.getNama()+" dipilih");
-
-                    System.out.println(data+"");
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        if (requestCode==GAMBAR2 && resultCode== Activity.RESULT_OK){
-            if (data!=null){
-                try{
-                    InputStream instr = context.getContentResolver().openInputStream(data.getData());
-                    bt_cam2.setTextColor(Color.BLUE);
-                    tx_gambar2.setText("Gambar 2 dipilih");
-                    System.out.println(data+"");
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        if (requestCode==GAMBAR3 && resultCode== Activity.RESULT_OK){
-            if (data!=null){
-                try{
-                    InputStream instr = context.getContentResolver().openInputStream(data.getData());
-                    bt_cam3.setTextColor(Color.BLUE);
-                    tx_gambar3.setText("Gambar 3 dipilih");
-                    System.out.println(data+"");
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }
+        df1=null;
+        df2=null;
+        df3=null;
     }
 }

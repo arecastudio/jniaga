@@ -56,6 +56,11 @@ public class Terbaru extends Fragment {
                     di.setJudul(json.getString("judul"));
                     di.setIsi(json.getString("isi"));
                     di.setIdUser(json.getString("id_user"));
+                    di.setHarga(Double.parseDouble(json.getString("harga")));
+                    if(json.getString("nama_gambar")!="null"){
+                        String url_icon=StaticUtil.getWebUrl()+"assets/foto/"+json.getString("nama_gambar");
+                        di.setNamaGambar(url_icon);
+                    }
                     data.add(di);
                 }
             }else {

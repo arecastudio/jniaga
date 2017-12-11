@@ -1,11 +1,14 @@
 package io.github.arecastudio.jniaga.fragments;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,6 +77,11 @@ public class LoginFB extends Fragment {
         loginButton = (LoginButton) view.findViewById(R.id.login_button);
         tx_status=(TextView)view.findViewById(R.id.tx_status);
 
+        TelephonyManager telemamanger = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+
+        TextView tx_telp=view.findViewById(R.id.tx_telp);
+        tx_telp.setText("No hp.");
+
         pictureView=(ProfilePictureView) view.findViewById(R.id.facebook_picture);
 
         callbackManager = CallbackManager.Factory.create();
@@ -85,7 +93,7 @@ public class LoginFB extends Fragment {
 
         //loginButton.setPublishPermissions(Arrays.asList("publish_actions"));
         ///////
-        
+
         ///////
 
         loginButton.setFragment(this);

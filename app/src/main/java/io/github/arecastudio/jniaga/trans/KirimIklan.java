@@ -23,11 +23,15 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.github.arecastudio.jniaga.MainActivity;
 import io.github.arecastudio.jniaga.R;
+import io.github.arecastudio.jniaga.ctrl.KirimFoto;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 import io.github.arecastudio.jniaga.fragments.BuatBaru;
+import io.github.arecastudio.jniaga.model.DataFoto;
 
 /**
  * Created by android on 12/8/17.
@@ -48,15 +52,36 @@ public class KirimIklan extends AsyncTask<JSONObject,JSONObject,JSONObject> {
 
     @Override
     protected JSONObject doInBackground(JSONObject... params) {
+        final KirimFoto kirimFoto=new KirimFoto();
         Object object=params[0];
-
-        HttpClient client = new DefaultHttpClient();
-        HttpConnectionParams.setConnectionTimeout(client.getParams(), 100000);
-
-        jsonResponse = null;
-        HttpPost post = new HttpPost(url);
-
+        final JSONObject object1=params[1];
         try {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        DataFoto[] dataFotos=(DataFoto[]) object1.get("data_foto");
+                        for (DataFoto dfs:dataFotos){
+                            if (dfs!=null){
+                                System.out.println("upload --> "+dfs.getNama());
+                                kirimFoto.uploadFile(dfs.getFis(),dfs.getUuidNama()+".jpg");
+                            }
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
+            //=======================
+            HttpClient client = new DefaultHttpClient();
+            HttpConnectionParams.setConnectionTimeout(client.getParams(), 100000);
+
+            jsonResponse = null;
+            HttpPost post = new HttpPost(url);
+
+
+            //=======================
             StringEntity se = new StringEntity("kirim="+object.toString());
             post.addHeader("content-type", "application/x-www-form-urlencoded");
             post.setEntity(se);

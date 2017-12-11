@@ -1,6 +1,5 @@
 package io.github.arecastudio.jniaga;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -16,8 +15,6 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 import io.github.arecastudio.jniaga.fragments.BuatBaru;
@@ -34,6 +31,7 @@ public class MainActivity extends AppCompatActivity
     private FragmentManager fm;
 
     private CallbackManager callbackManager;
+    private String fireToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,6 +148,13 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_buat:
                 setTitle("Buat Iklan baru");
                 fm.beginTransaction().replace(R.id.MainFrame,new BuatBaru()).commit();
+                break;
+            case R.id.nav_share:
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "Aplikasi Forum Jual Beli untuk wilayah Jayapura, lebih mudah menemukan produk yang diinginkan.");
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sendIntent, "Bagikan"));
                 break;
             default:
         }

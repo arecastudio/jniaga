@@ -19,7 +19,8 @@ public class KirimFoto {
     public KirimFoto(){
 
     }
-    public int uploadFile(InputStream fis, String fileName) {
+
+    public int uploadFile(FileInputStream fis, String fileName) {
         final String LOGS="Kirim FOTO";
         //String fileName = sourceFileUri;
         String link=StaticUtil.getWebUrl()+"pages/upload_foto.php";
@@ -41,7 +42,7 @@ public class KirimFoto {
             try {
                 //Log.e(LOGS,sourceFileUri.toString());
                 // open a URL connection to the Servlet
-                InputStream fileInputStream = fis;//new FileInputStream(sourceFile);
+                FileInputStream fileInputStream = fis;//new FileInputStream(sourceFile);
                 URL url = new URL(link);//upload_foto.php
 
                 // Open a HTTP  connection to  the URL
@@ -103,11 +104,8 @@ public class KirimFoto {
                 dos.flush();
                 dos.close();
 
-            } catch (MalformedURLException ex) {
-                ex.printStackTrace();
-                Log.e(LOGS, "error: " + ex.getMessage(), ex);
             } catch (Exception e) {
-                Log.e(LOGS, e.getMessage().toString());
+                e.printStackTrace();
             }
             return serverResponseCode;
         }

@@ -28,4 +28,9 @@
         android:text="status"
         android:id="@+id/tx_status"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tx_telp"/>
+
 </RelativeLayout>

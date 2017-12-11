@@ -6,7 +6,8 @@ package io.github.arecastudio.jniaga.model;
 
 public class DataIklan {
     private int IdIklan,IdKategri;
-    private String Judul,Isi,IdUser;
+    private String Judul,Isi,IdUser,NamaGambar;
+    private double harga;
 
     public DataIklan() {
     }
@@ -49,5 +50,21 @@ public class DataIklan {
 
     public void setIdUser(String idUser) {
         IdUser = idUser;
+    }
+
+    public String getNamaGambar() {
+        return NamaGambar;
+    }
+
+    public void setNamaGambar(String namaGambar) {
+        NamaGambar = namaGambar;
+    }
+
+    public double getHarga() {
+        return harga;
+    }
+
+    public void setHarga(double harga) {
+        this.harga = harga;
     }
 }
