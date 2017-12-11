@@ -13,7 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import io.github.arecastudio.jniaga.R;
 import io.github.arecastudio.jniaga.adapters.TerbaruAdapter;
@@ -80,7 +79,7 @@ public class Terbaru extends Fragment {
             grid=(GridView)view.findViewById(R.id.gridTerbaru);
             grid.setAdapter(new TerbaruAdapter(context,data));
         }else {
-            view=inflater.inflate(R.layout.frame_diskonek,container,false);
+            view=inflater.inflate(R.layout.frame_notkonek,container,false);
         }
         return view;
     }

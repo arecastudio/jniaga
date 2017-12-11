@@ -23,6 +23,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.facebook.Profile;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
@@ -144,7 +145,19 @@ public class LoginFB extends Fragment {
                 if (loginResult!=null){
                     //String accessToken=loginResult.getAccessToken().getToken();
                     //tx_status.setText("Login success\n"+loginResult.getAccessToken().getToken());
-                    tx_status.setText("Sukses.");
+
+                    GraphRequest request=GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                        @Override
+                        public void onCompleted(JSONObject object, GraphResponse response) {
+                            try {
+                                tx_status.setText(object.getString("name"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                tx_status.setText("Sukses.");
+                            }
+                        }
+                    });
+                    request.executeAsync();
 
                     userId=loginResult.getAccessToken().getUserId();
                     pictureView.setProfileId(userId);

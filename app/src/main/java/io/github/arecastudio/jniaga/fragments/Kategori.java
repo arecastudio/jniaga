@@ -100,7 +100,7 @@ public class Kategori extends Fragment {
             grid=(GridView)view.findViewById(R.id.gridKategori);
             grid.setAdapter(new KategoriAdapter(StaticUtil.getContext(),data));
         }else {
-            layId=R.layout.frame_diskonek;
+            layId=R.layout.frame_notkonek;
             view=(View)inflater.inflate(layId,container,false);
         }
         return view;

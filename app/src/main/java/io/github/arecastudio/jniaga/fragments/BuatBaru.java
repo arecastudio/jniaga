@@ -3,14 +3,9 @@ package io.github.arecastudio.jniaga.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.PaintDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -20,38 +15,26 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
-import bolts.Task;
-import io.github.arecastudio.jniaga.MainActivity;
 import io.github.arecastudio.jniaga.R;
-import io.github.arecastudio.jniaga.activities.PermissionActivity;
 import io.github.arecastudio.jniaga.ctrl.Fungsi;
-import io.github.arecastudio.jniaga.ctrl.KirimFoto;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 import io.github.arecastudio.jniaga.model.DataFoto;
-import io.github.arecastudio.jniaga.model.DataKategori;
 import io.github.arecastudio.jniaga.trans.KirimIklan;
 import io.github.arecastudio.jniaga.trans.TerimaKategori;
 
@@ -142,7 +125,7 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                 view=inflater.inflate(R.layout.frame_notlogin,container,false);
             }
         }else {
-            view=inflater.inflate(R.layout.frame_diskonek,container,false);
+            view=inflater.inflate(R.layout.frame_notkonek,container,false);
         }
         return view;
     }
