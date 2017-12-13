@@ -4,14 +4,18 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
@@ -29,19 +33,29 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.login.widget.ProfilePictureView;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import io.github.arecastudio.jniaga.MainActivity;
 import io.github.arecastudio.jniaga.activities.PermissionActivity;
 import io.github.arecastudio.jniaga.ctrl.Fungsi;
+import io.github.arecastudio.jniaga.ctrl.GetImageFromURL;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
@@ -53,19 +67,31 @@ import io.github.arecastudio.jniaga.R;
  * Created by android on 12/4/17.
  */
 
-public class LoginFB extends Fragment {
+public class LoginFB extends Fragment implements View.OnClickListener {
     private LoginButton loginButton;
     private CallbackManager callbackManager;
     private TextView tx_status;
     private Context context;
     private ProfilePictureView pictureView;
     private String userId;
-
     private final String[] permissions={"publish_actions","email","user_status","public_profile"};
+    private GoogleSignInClient mGoogleSignInClient;
+    private final int GOOGLE_LOGIN=666;
+    private final String TAG="LoginFB.java";
 
     public LoginFB(){
+        //konstruktor
         context=StaticUtil.getContext();
     }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId()==R.id.sign_in_button){
+            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, GOOGLE_LOGIN);
+        }
+    }
+
 
     @Nullable
     @Override
@@ -103,6 +129,23 @@ public class LoginFB extends Fragment {
         ProsesLogin();
 
         ifLogin();
+
+        /*String url="https://img.okezone.com/content/2011/04/07/340/443471/J1647XEN5J.jpg";
+        ImageView im=(ImageView)view.findViewById(R.id.imageView);
+        GetImageFromURL gifURL=new GetImageFromURL(im);
+        gifURL.execute(url);*/
+
+        //LoginWithGoogle
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
+
+        SignInButton signInButton = view.findViewById(R.id.sign_in_button);
+        signInButton.setSize(SignInButton.SIZE_STANDARD);
+        signInButton.setOnClickListener(this);
+
+        updateUI(GoogleSignIn.getLastSignedInAccount(getActivity()));
 
         return view;
     }
@@ -204,5 +247,38 @@ public class LoginFB extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode,resultCode,data);
+
+        if (requestCode==GOOGLE_LOGIN){
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
+    }
+
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+
+            // Signed in successfully, show authenticated UI.
+            updateUI(account);
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            updateUI(null);
+        }
+    }
+
+    private void updateUI(GoogleSignInAccount acct){
+        //GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+        if (acct != null) {
+            String personName = acct.getDisplayName();
+            String personGivenName = acct.getGivenName();
+            String personFamilyName = acct.getFamilyName();
+            String personEmail = acct.getEmail();
+            String personId = acct.getId();
+            Uri personPhoto = acct.getPhotoUrl();
+
+            Log.e(TAG,acct.zzaap());
+        }
     }
 }

@@ -20,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -79,6 +81,7 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
 
     private final List<String> lists=Arrays.asList("publish_actions");
     private AccessToken accToken=null;
+    private GoogleSignInAccount account;
 
     public BuatBaru(){
         context= StaticUtil.getContext();
@@ -92,7 +95,9 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=null;
         if (fungsi.cekKoneksi()){
-            if (AccessToken.getCurrentAccessToken()!=null){
+            account= GoogleSignIn.getLastSignedInAccount(getActivity());
+            //if (AccessToken.getCurrentAccessToken()!=null){
+            if (account!=null){
                 view=inflater.inflate(R.layout.frame_baru,container,false);
                 //txTitle=(TextView)view.findViewById(R.id.tx_title);
                 edit_isi_iklan=(EditText)view.findViewById(R.id.edit_isi_iklan);
@@ -209,9 +214,11 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         Intent intent=null;
+        //cek ulang
+        account= GoogleSignIn.getLastSignedInAccount(getActivity());
         switch (v.getId()){
             case R.id.bt_post:
-                if (AccessToken.getCurrentAccessToken()!=null){
+                if (account!=null){
                     if (isValid()) {
                         /*Bundle params = new Bundle();
                         String isi = "";

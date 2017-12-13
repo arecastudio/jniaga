@@ -1,6 +1,9 @@
 package io.github.arecastudio.jniaga;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.design.widget.NavigationView;
@@ -9,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -20,7 +24,9 @@ import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 import io.github.arecastudio.jniaga.fragments.BuatBaru;
 import io.github.arecastudio.jniaga.fragments.Cari;
 import io.github.arecastudio.jniaga.fragments.Kategori;
+import io.github.arecastudio.jniaga.fragments.LihatPost;
 import io.github.arecastudio.jniaga.fragments.LoginFB;
+import io.github.arecastudio.jniaga.fragments.LoginUser;
 import io.github.arecastudio.jniaga.fragments.Terbaru;
 
 public class MainActivity extends AppCompatActivity
@@ -33,10 +39,38 @@ public class MainActivity extends AppCompatActivity
     private CallbackManager callbackManager;
     private String fireToken;
 
+    private final String TAG="MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         StaticUtil.setContext(this);
+
+        //firebase messager stuff
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create channel to show notifications.
+            String channelId  = getString(R.string.default_notification_channel_id);
+            String channelName = getString(R.string.default_notification_channel_name);
+            NotificationManager notificationManager =
+                    getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(new NotificationChannel(channelId,
+                    channelName, NotificationManager.IMPORTANCE_LOW));
+        }
+
+        // Handle possible data accompanying notification message.
+        // [START handle_data_extras]
+        if (getIntent().getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                Object value = getIntent().getExtras().get(key);
+                Log.e(TAG, "Key: " + key + " Value: " + value);
+            }
+        }
+        // [END handle_data_extras]
+
+
+
+        //firebase messager stuff
+
 //-------------------------------------------------------------
         /*FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
@@ -68,7 +102,7 @@ public class MainActivity extends AppCompatActivity
         StaticUtil.setIsLogin(true);
 
         login_stat= StaticUtil.isLogin();
-        Toast.makeText(getApplicationContext(),"Status: "+login_stat,Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(),"Status: "+login_stat,Toast.LENGTH_SHORT).show();
         //----------------------------------------------
 
         fm=getSupportFragmentManager();
@@ -143,11 +177,16 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_login:
                 setTitle("Login akun");
-                fm.beginTransaction().replace(R.id.MainFrame,new LoginFB()).commit();
+                //fm.beginTransaction().replace(R.id.MainFrame,new LoginFB()).commit();
+                fm.beginTransaction().replace(R.id.MainFrame,new LoginUser()).commit();
                 break;
             case R.id.nav_buat:
                 setTitle("Buat Iklan baru");
                 fm.beginTransaction().replace(R.id.MainFrame,new BuatBaru()).commit();
+                break;
+            case R.id.nav_list:
+                setTitle("List Postingan");
+                fm.beginTransaction().replace(R.id.MainFrame,new LihatPost()).commit();
                 break;
             case R.id.nav_share:
                 Intent sendIntent = new Intent();

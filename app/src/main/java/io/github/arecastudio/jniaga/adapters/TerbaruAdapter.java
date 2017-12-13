@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import io.github.arecastudio.jniaga.R;
 import io.github.arecastudio.jniaga.ctrl.Fungsi;
+import io.github.arecastudio.jniaga.ctrl.GetImageFromURL;
 import io.github.arecastudio.jniaga.imgs.ImageLoader;
 import io.github.arecastudio.jniaga.model.DataIklan;
 
@@ -65,8 +66,7 @@ public class TerbaruAdapter extends BaseAdapter {
         ImageView imageView=(ImageView) convertView.findViewById(R.id.imageView);
 
         if (di.getNamaGambar()!=null){
-            ImageLoader loader=new ImageLoader(context);
-            loader.DisplayImage(di.getNamaGambar(),imageView);
+            new GetImageFromURL(imageView).execute(di.getNamaGambar());
         }else {
             imageView.setImageResource(R.mipmap.ic_noimage);
         }

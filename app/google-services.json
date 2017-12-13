@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "84409863489",
+    "project_id": "firebase-jniaga"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:84409863489:android:7a48c68ce806c2b7",
+        "android_client_info": {
+          "package_name": "io.github.arecastudio.jniaga"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "84409863489-sdhjorgv5kkso1mbgkf5esp24qj9eb1l.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "84409863489-ec0rnnoce0a2ijnqpfjge0da7fqpde54.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.github.arecastudio.jniaga",
+            "certificate_hash": "b3ca24220be76b6480d672e9dff50a01d59b615f"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGA3f9vRbHBSumHZwn4jeLDhRX_FcRrbA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

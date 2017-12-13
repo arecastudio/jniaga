@@ -2,6 +2,7 @@ package io.github.arecastudio.jniaga.ctrl;
 
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +22,7 @@ import android.util.Log;
 
 import com.facebook.AccessToken;
 
+import org.apache.http.HttpConnection;
 import org.apache.http.util.ByteArrayBuffer;
 
 import java.io.BufferedInputStream;
@@ -31,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.NumberFormat;
@@ -354,5 +357,20 @@ public class Fungsi {
         return result;
     }
 
+    public Bitmap GetFotoFromUrl(URL url){
+        Bitmap bitmap=null;
+        HttpURLConnection urlConnection=null;
+        try {
+            urlConnection=(HttpURLConnection)url.openConnection();
+            InputStream is=new BufferedInputStream(urlConnection.getInputStream());
+
+            bitmap = BitmapFactory.decodeStream(is);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            urlConnection.disconnect();
+        }
+        return bitmap;
+    }
 
 }
