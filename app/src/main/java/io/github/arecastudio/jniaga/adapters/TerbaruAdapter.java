@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 import io.github.arecastudio.jniaga.R;
@@ -66,9 +68,11 @@ public class TerbaruAdapter extends BaseAdapter {
         ImageView imageView=(ImageView) convertView.findViewById(R.id.imageView);
 
         if (di.getNamaGambar()!=null){
-            new GetImageFromURL(imageView).execute(di.getNamaGambar());
+            //new GetImageFromURL(imageView).execute(di.getNamaGambar());
+            Picasso.with(context).load(di.getNamaGambar()).resize(200,200).centerCrop().into(imageView);
         }else {
-            imageView.setImageResource(R.mipmap.ic_noimage);
+            //imageView.setImageResource(R.mipmap.ic_noimage);
+            Picasso.with(context).load(R.mipmap.ic_noimage).resize(100,100).centerCrop().into(imageView);
         }
 
         return convertView;

@@ -9,6 +9,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 import io.github.arecastudio.jniaga.R;
@@ -71,7 +73,8 @@ public class KategoriAdapter extends BaseAdapter {
         //imageView.setImageResource(dk.getIcon());
         //if (dk.getIcon()!=null) imageView.setImageBitmap(dk.getIcon());
 
-        new GetImageFromURL(imageView).execute(dk.getIcon());
+        //new GetImageFromURL(imageView).execute(dk.getIcon());
+        Picasso.with(context).load(dk.getIcon()).resize(150,150).centerCrop().into(imageView);
 
         return convertView;
     }

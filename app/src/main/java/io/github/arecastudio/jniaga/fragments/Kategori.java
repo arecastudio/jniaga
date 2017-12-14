@@ -4,10 +4,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,11 +35,17 @@ public class Kategori extends Fragment {
     private ArrayList data;
     private Context context;
     private boolean isConnected;
+    //private StorageReference kategoriRef;
+    private final String TAG="Kategori.java";
 
     public Kategori(){
         context=StaticUtil.getContext();
         isConnected=true;
         GetData();
+
+        //FirebaseStorage storage = FirebaseStorage.getInstance();
+        //StorageReference storageRef = storage.getReference();
+        //kategoriRef = storageRef.child("icons/kategori");
     }
 
     private void GetData(){
@@ -64,6 +74,8 @@ public class Kategori extends Fragment {
                     dk.setNama(json.getString("nama"));
 
                     String url_icon=StaticUtil.getWebUrl()+"assets/icons/kategori/"+json.getString("id")+".png";
+                    //String urls=kategoriRef.getPath() +"/"+json.getString("id")+".png";
+                    Log.d(TAG,url_icon);
                     dk.setIcon(url_icon);
                     data.add(dk);
                 }

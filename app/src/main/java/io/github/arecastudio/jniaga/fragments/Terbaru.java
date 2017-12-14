@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import io.github.arecastudio.jniaga.trans.TerimaTerbaru;
  */
 
 public class Terbaru extends Fragment {
+    private final String TAG="Terbaru";
     private GridView grid;
     private ArrayList data;
     private Context context;
@@ -59,6 +61,7 @@ public class Terbaru extends Fragment {
                     if(json.getString("nama_gambar")!="null"){
                         String url_icon=StaticUtil.getWebUrl()+"assets/foto/"+json.getString("nama_gambar");
                         di.setNamaGambar(url_icon);
+                        Log.d(TAG,url_icon);
                     }
                     data.add(di);
                 }

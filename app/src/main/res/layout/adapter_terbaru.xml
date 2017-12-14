@@ -22,8 +22,9 @@
         android:layout_height="200dp"
         android:layout_gravity="center"
         android:id="@+id/imageView"
-        android:scaleType="centerCrop"
         app:srcCompat="@mipmap/ic_noimage"/>
+
+    <!-- android:scaleType="centerCrop" -->
 
     <TextView
         android:layout_width="match_parent"
