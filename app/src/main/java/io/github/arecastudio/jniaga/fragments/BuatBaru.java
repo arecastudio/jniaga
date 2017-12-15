@@ -2,12 +2,21 @@ package io.github.arecastudio.jniaga.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,14 +32,26 @@ import android.widget.Toast;
 import com.facebook.AccessToken;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,6 +67,7 @@ import io.github.arecastudio.jniaga.trans.TerimaKategori;
  */
 
 public class BuatBaru extends Fragment implements View.OnClickListener {
+    private final String TAG="BuatBaru";
     private Context context;
     private Fungsi fungsi;
     private EditText edit_isi_iklan;
@@ -54,6 +77,8 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
     private Spinner cbx_jenis_iklan;
     private int id_jenis_iklan;
     private Bundle bundle;
+    private Intent intent;
+    private Uri globalUri;
 
     private Button bt_post;
     private Button bt_cam1;
@@ -64,6 +89,7 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
     private TextView tx_gambar1;
     private TextView tx_gambar2;
     private TextView tx_gambar3;
+    private ImageView imageView;
 
     //picture takken
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -82,6 +108,8 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
     private final List<String> lists=Arrays.asList("publish_actions");
     private AccessToken accToken=null;
     private GoogleSignInAccount account;
+
+    private static String tempUri=null;
 
     public BuatBaru(){
         context= StaticUtil.getContext();
@@ -125,6 +153,8 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                 tx_gambar2=(TextView)view.findViewById(R.id.tx_gambar2);
                 tx_gambar3=(TextView)view.findViewById(R.id.tx_gambar3);
 
+                imageView=(ImageView)view.findViewById(R.id.imageView);
+
                 Inits();
             }else {
                 view=inflater.inflate(R.layout.frame_notlogin,container,false);
@@ -132,6 +162,7 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
         }else {
             view=inflater.inflate(R.layout.frame_notkonek,container,false);
         }
+
         return view;
     }
 
@@ -213,7 +244,6 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        Intent intent=null;
         //cek ulang
         account= GoogleSignIn.getLastSignedInAccount(getActivity());
         switch (v.getId()){
@@ -261,7 +291,7 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                             jo.put("judul",edit_judul_iklan.getText().toString().trim().toUpperCase());
                             jo.put("isi",edit_isi_iklan.getText().toString().trim());
                             jo.put("id_kategori",id_jenis_iklan);
-                            jo.put("user_id",AccessToken.getCurrentAccessToken().getUserId()+"");
+                            jo.put("user_id",account.getId());
                             jo.put("harga",Double.parseDouble(edit_harga.getText().toString().trim()));
                             jo.put("foto2",array);
 
@@ -293,14 +323,68 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.button_camera1:
+                final String[] items={"Dari Kamera","Dari Gallery","Batal"};
+                final AlertDialog.Builder builder=new AlertDialog.Builder(context);
+                builder.setTitle("Ambil Gambar")
+                        .setIcon(R.drawable.ic_menu_camera)
+                        .setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int pos) {
+                                Log.d(TAG,pos+". "+items[pos]);
+                                switch (pos){
+                                    case 0:
+                                        //kamera
+                                        try {
+                                            String imageFileName =System.currentTimeMillis()+".jpg";
+                                            File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"jniaga" );
+                                            storageDir.mkdirs();
+                                            File images=new File(storageDir,imageFileName);
+                                            Uri photoURI=Uri.fromFile(images);
+                                            globalUri=photoURI;
+                                            if (images!=null){
+                                                Log.e(TAG,photoURI+"");
+                                                PackageManager pm=context.getPackageManager();
+                                                if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)){
+                                                    intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                    //intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                                    //        MediaStore.Images.Media.EXTERNAL_CONTENT_URI.getPath());
+                                                    if (intent.resolveActivity(context.getPackageManager())!=null){
+                                                        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                                                        //startActivityForResult(intent, GAMBAR1);
+                                                    }
+                                                }else {
+                                                    //pm.a
+                                                }
+                                            }
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                        break;
+                                    case 1:
+                                        //gallery
+                                        intent = new Intent();
+                                        intent.setType("image/jpeg");
+                                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                                        startActivityForResult(Intent.createChooser(intent, "Pilih Gambar (*.JPG)"), GAMBAR1);
+                                        break;
+                                    default:
+                                }
+                            }
+                        })
+                        .create()
+                        .show();
+
+
+
                 /*Intent intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (intent.resolveActivity(context.getPackageManager())!=null){
                     startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-                }*/
+                }
                 intent = new Intent();
                 intent.setType("image/jpeg");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Pilih Gambar (*.JPG)"), GAMBAR1);
+                startActivityForResult(Intent.createChooser(intent, "Pilih Gambar (*.JPG)"), GAMBAR1);*/
                 break;
             case R.id.button_camera2:
                 intent = new Intent();
@@ -320,18 +404,24 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+
         final int LIMIT_SIZE=1000000;
         final String LIMITED_SIZE="Ukuran gambar terlalu besar.";
         String uuid=UUID.randomUUID().toString();
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==GAMBAR1 && resultCode== Activity.RESULT_OK){
-            if (data!=null){
-                try{
-                    InputStream instr = context.getContentResolver().openInputStream(data.getData());
-                    //FileInputStream fis=context.getClass().getClassLoader().getResourceAsStream(data.getData());
+        Log.e(TAG,requestCode+"");
+        if (resultCode==Activity.RESULT_OK){
+            if (requestCode==GAMBAR1) {
+                try {
+                    //InputStream instr = context.getContentResolver().openInputStream(data.getData());
                     Uri imgUri = data.getData();
-                    String picturePath = imgUri.getPath();
+                    //String picturePath = imgUri.getPath();
 
+                    CropImage.activity(imgUri)
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .setAspectRatio(1, 1)
+                            .start(context, this);
+/*
                     df1=fungsi.dumpImageMetaData(imgUri);
                     if(df1.getUkuran()<=LIMIT_SIZE){
                         df1.setFis((FileInputStream)instr);
@@ -342,16 +432,64 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                         df1=null;
                         tx_gambar1.setText(LIMITED_SIZE);
                     }
-
-                    //inputStream1=instr;
+                    */
 
                     //System.out.println(data+"\n"+uuid);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else if (requestCode==REQUEST_IMAGE_CAPTURE){
+                try {
+                    //Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+
+
+                    Log.e(TAG,"xxxxx "+globalUri);
+
+                    //ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    //thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                    /*
+                    String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), thumbnail, "Title", null);
+
+                    */
+                    CropImage.activity(globalUri)
+                            .setGuidelines(CropImageView.Guidelines.ON)
+                            .setAspectRatio(1, 1)
+                            .start(context, this);
+                    globalUri=null;
                 }catch (Exception e){
                     e.printStackTrace();
                 }
             }
         }
 
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == Activity.RESULT_OK) {
+                Uri resultUri = result.getUri();
+                Picasso.with(context).load(resultUri).resize(200,200).centerCrop().into(imageView);
+                Log.e(TAG,resultUri.toString());
+
+                //df1=fungsi.dumpImageMetaData(resultUri);
+                df1=new DataFoto();
+                df1.setUuidNama(UUID.randomUUID().toString());
+                File fl=new File(resultUri.getPath());
+                df1.setNama(fl.getName());
+                //Log.e(TAG,fl.getName());
+                try {
+                    InputStream is=new FileInputStream(resultUri.getPath());
+                    df1.setFis((FileInputStream)is);
+                    bt_cam1.setTextColor(Color.BLUE);
+                    tx_gambar1.setText("Gambar "+df1.getNama()+" dipilih");
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+                Log.e(TAG,error.toString());
+            }
+        }
+/*
         if (requestCode==GAMBAR2 && resultCode== Activity.RESULT_OK){
             if (data!=null){
                 try{
@@ -397,6 +535,7 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                 }
             }
         }
+        */
     }
 
     private boolean isValid(){
@@ -432,5 +571,9 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
         df1=null;
         df2=null;
         df3=null;
+
+        globalUri=null;
+
+        imageView.setImageResource(R.mipmap.ic_noimage);
     }
 }

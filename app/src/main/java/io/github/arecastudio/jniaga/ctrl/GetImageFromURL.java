@@ -23,7 +23,7 @@ import io.github.arecastudio.jniaga.R;
 public class GetImageFromURL extends AsyncTask<String,Void,Bitmap> {
     private ImageView imageView;
 
-    public GetImageFromURL(ImageView imageView){
+    public GetImageFromURL(ImageView imageView,int i){
         this.imageView=imageView;
     }
 

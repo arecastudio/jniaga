@@ -1,7 +1,9 @@
 {
   "project_info": {
     "project_number": "84409863489",
-    "project_id": "firebase-jniaga"
+    "firebase_url": "https://fir-jniaga.firebaseio.com",
+    "project_id": "firebase-jniaga",
+    "storage_bucket": "firebase-jniaga.appspot.com"
   },
   "client": [
     {
@@ -12,6 +14,10 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "84409863489-s43ur8noetgd5ivaig04ot9dnenuesfk.apps.googleusercontent.com",
+          "client_type": 3
+        },
         {
           "client_id": "84409863489-sdhjorgv5kkso1mbgkf5esp24qj9eb1l.apps.googleusercontent.com",
           "client_type": 3
@@ -32,14 +38,22 @@
       ],
       "services": {
         "analytics_service": {
-          "status": 1
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-60088404-3"
+          }
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "84409863489-s43ur8noetgd5ivaig04ot9dnenuesfk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }

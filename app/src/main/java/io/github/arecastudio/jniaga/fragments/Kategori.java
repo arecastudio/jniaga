@@ -1,6 +1,7 @@
 package io.github.arecastudio.jniaga.fragments;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -20,6 +22,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+import bolts.Task;
 import io.github.arecastudio.jniaga.R;
 import io.github.arecastudio.jniaga.adapters.KategoriAdapter;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
@@ -37,10 +40,13 @@ public class Kategori extends Fragment {
     private boolean isConnected;
     //private StorageReference kategoriRef;
     private final String TAG="Kategori.java";
+    private String urls=null;
+    private String id=null;
 
     public Kategori(){
         context=StaticUtil.getContext();
         isConnected=true;
+
         GetData();
 
         //FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -68,15 +74,27 @@ public class Kategori extends Fragment {
             try {
                 for (int i=0;i<array.length();i++){
                     json=array.getJSONObject(i);
-
+                    id=json.getString("id").toString();
                     DataKategori dk=new DataKategori();
                     dk.setId(json.getInt("id"));
                     dk.setNama(json.getString("nama"));
-
                     String url_icon=StaticUtil.getWebUrl()+"assets/icons/kategori/"+json.getString("id")+".png";
-                    //String urls=kategoriRef.getPath() +"/"+json.getString("id")+".png";
+                    /*
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            iconPath.child("icons/kategori/"+json.getString("id")+".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    urls=uri.toString();
+                                }
+                            });
+                        }
+                    }).start();*/
+
                     Log.d(TAG,url_icon);
                     dk.setIcon(url_icon);
+
                     data.add(dk);
                 }
             } catch (JSONException e) {

@@ -14,8 +14,6 @@ import java.util.ArrayList;
 
 import io.github.arecastudio.jniaga.R;
 import io.github.arecastudio.jniaga.ctrl.Fungsi;
-import io.github.arecastudio.jniaga.ctrl.GetImageFromURL;
-import io.github.arecastudio.jniaga.imgs.ImageLoader;
 import io.github.arecastudio.jniaga.model.DataIklan;
 
 /**
@@ -27,6 +25,7 @@ public class TerbaruAdapter extends BaseAdapter {
     private ArrayList<DataIklan> data;
     private LayoutInflater inflater;
     private Fungsi fungsi;
+    private final int IMG_SIZE=150;
 
     public TerbaruAdapter(Context context,ArrayList<DataIklan>data){
         this.context=context;
@@ -69,10 +68,10 @@ public class TerbaruAdapter extends BaseAdapter {
 
         if (di.getNamaGambar()!=null){
             //new GetImageFromURL(imageView).execute(di.getNamaGambar());
-            Picasso.with(context).load(di.getNamaGambar()).resize(200,200).centerCrop().into(imageView);
+            Picasso.with(context).load(di.getNamaGambar()).resize(IMG_SIZE,IMG_SIZE).centerCrop().into(imageView);
         }else {
             //imageView.setImageResource(R.mipmap.ic_noimage);
-            Picasso.with(context).load(R.mipmap.ic_noimage).resize(100,100).centerCrop().into(imageView);
+            Picasso.with(context).load(R.mipmap.ic_noimage).resize(IMG_SIZE,IMG_SIZE).centerCrop().into(imageView);
         }
 
         return convertView;

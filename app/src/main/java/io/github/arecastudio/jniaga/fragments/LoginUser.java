@@ -25,9 +25,9 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.squareup.picasso.Picasso;
 
 import io.github.arecastudio.jniaga.R;
-import io.github.arecastudio.jniaga.ctrl.GetImageFromURL;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 
 /**
@@ -126,7 +126,8 @@ public class LoginUser extends Fragment implements View.OnClickListener {
 
             ImageView imageView=(ImageView)view.findViewById(R.id.imageView);
             if (gui.getPersonPhoto()!=null){
-                new GetImageFromURL(imageView).execute(gui.getPersonPhoto().toString());
+                //new GetImageFromURL(imageView).execute(gui.getPersonPhoto().toString());
+                Picasso.with(context).load(gui.getPersonPhoto()).resize(150,150).into(imageView);
             }
 
             Button bt_logout=(Button)view.findViewById(R.id.bt_logout);

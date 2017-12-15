@@ -1,6 +1,8 @@
 package io.github.arecastudio.jniaga.adapters;
 
 import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,15 +11,14 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 import io.github.arecastudio.jniaga.R;
-import io.github.arecastudio.jniaga.ctrl.Fungsi;
-import io.github.arecastudio.jniaga.ctrl.GetImageFromURL;
-import io.github.arecastudio.jniaga.ctrl.StaticUtil;
-import io.github.arecastudio.jniaga.imgs.ImageLoader;
 import io.github.arecastudio.jniaga.model.DataKategori;
 
 /**
@@ -28,6 +29,8 @@ public class KategoriAdapter extends BaseAdapter {
     private final Context context;
     private ArrayList<DataKategori> data;
     private LayoutInflater inflater;
+    private final String TAG="KategoriAdapter";
+    private String urls=null;
 
     public KategoriAdapter(Context context,ArrayList<DataKategori> data) {
         this.context = context;
@@ -66,7 +69,6 @@ public class KategoriAdapter extends BaseAdapter {
         //imageView.setPadding(2, 2, 2, 2);
 
         TextView tx_title=(TextView)convertView.findViewById(R.id.tx_title);
-        tx_title.setText(dk.getNama());
 
         //imageView.setImageResource(icons[position]);
 
@@ -74,7 +76,15 @@ public class KategoriAdapter extends BaseAdapter {
         //if (dk.getIcon()!=null) imageView.setImageBitmap(dk.getIcon());
 
         //new GetImageFromURL(imageView).execute(dk.getIcon());
-        Picasso.with(context).load(dk.getIcon()).resize(150,150).centerCrop().into(imageView);
+
+        if (dk!=null){
+            tx_title.setText(dk.getNama());
+            if (dk.getIcon()!=null){
+                Picasso.with(context).load(dk.getIcon()).resize(100,100).centerCrop().into(imageView);
+            }else {
+                Picasso.with(context).load(R.mipmap.ic_noimage).resize(100,100).centerCrop().into(imageView);
+            }
+        }
 
         return convertView;
     }
