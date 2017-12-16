@@ -55,7 +55,7 @@ public class Fungsi {
     }
 
     public boolean cekKoneksi() {
-        boolean haveConnectedWifi = false;
+        /*boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
 
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -68,7 +68,21 @@ public class Fungsi {
                 if (ni.isConnected())
                     haveConnectedMobile = true;
         }
-        return haveConnectedWifi || haveConnectedMobile;
+        return haveConnectedWifi || haveConnectedMobile;*/
+
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+
+            return true;
+
+        } else {
+
+            return false;
+
+        }
     }
 
     public Bitmap DownloadFullFromUrl(String imageFullURL) {

@@ -6,7 +6,7 @@ package io.github.arecastudio.jniaga.model;
 
 public class DataIklan {
     private int IdIklan,IdKategri;
-    private String Judul,Isi,IdUser,NamaGambar;
+    private String Judul,Isi,IdUser,NamaGambar,NamaKategori;
     private double harga;
 
     public DataIklan() {
@@ -26,6 +26,14 @@ public class DataIklan {
 
     public void setIdKategri(int idKategri) {
         IdKategri = idKategri;
+    }
+
+    public String getNamaKategori() {
+        return NamaKategori;
+    }
+
+    public void setNamaKategori(String namaKategori) {
+        NamaKategori = namaKategori;
     }
 
     public String getJudul() {

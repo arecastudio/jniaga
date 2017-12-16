@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import io.github.arecastudio.jniaga.R;
 import io.github.arecastudio.jniaga.activities.ProdukActivity;
 import io.github.arecastudio.jniaga.adapters.TerbaruAdapter;
+import io.github.arecastudio.jniaga.ctrl.Fungsi;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 import io.github.arecastudio.jniaga.model.DataIklan;
 import io.github.arecastudio.jniaga.trans.TerimaTerbaru;
@@ -35,7 +37,7 @@ import io.github.arecastudio.jniaga.trans.TerimaTerbaru;
  * Created by android on 12/1/17.
  */
 
-public class Terbaru extends Fragment {
+public class Terbaru extends Fragment implements TerimaTerbaru.TerimaTerbaruDelegate {
     private final String TAG="Terbaru";
     private final int REQ_CODE=666;
     private GridView grid;
@@ -44,57 +46,29 @@ public class Terbaru extends Fragment {
     private boolean isConnected;
     private SwipeRefreshLayout refreshLayout;
     private Intent intent;
+    private Fungsi fungsi;
 
     public Terbaru(){
         context= StaticUtil.getContext();
+        fungsi=new Fungsi(context);
         isConnected=true;
         GetData();
     }
 
     private void GetData() {
         JSONObject object=new JSONObject();
-        TerimaTerbaru tt=new TerimaTerbaru(context);
-        tt.execute(new JSONObject[]{object});
-
-        JSONObject json=new JSONObject();
-
-        try {
-            JSONArray array=tt.get();
-            if (array!=null){
-                data=new ArrayList<DataIklan>();
-                for (int i=0;i<array.length();i++){
-                    json=array.getJSONObject(i);
-                    DataIklan di=new DataIklan();
-                    di.setIdIklan(json.getInt("id"));;
-                    di.setIdKategri(json.getInt("id_kategori"));
-                    di.setJudul(json.getString("judul"));
-                    di.setIsi(json.getString("isi"));
-                    di.setIdUser(json.getString("id_user"));
-                    di.setHarga(Double.parseDouble(json.getString("harga")));
-                    if(json.getString("nama_gambar")!="null"){
-                        String url_icon=StaticUtil.getWebUrl()+"assets/foto/"+json.getString("nama_gambar");
-                        di.setNamaGambar(url_icon);
-                        Log.d(TAG,url_icon);
-                    }
-                    data.add(di);
-                }
-            }else {
-                isConnected=false;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        TerimaTerbaru tt=new TerimaTerbaru(context,this);
+        tt.execute(object);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=null;
-        if (isConnected){
+        if (fungsi.cekKoneksi()){
             view=inflater.inflate(R.layout.frame_terbaru,container,false);
 
             grid=(GridView)view.findViewById(R.id.gridTerbaru);
-            grid.setAdapter(new TerbaruAdapter(context,data));
             grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -106,12 +80,16 @@ public class Terbaru extends Fragment {
                     String harga=tx_harga.getText().toString();
                     String urlFoto=tx_harga.getTag().toString();
 
-                    intent=new Intent(getActivity(), ProdukActivity.class);
-                    intent.putExtra("idIklan",idIklan);
-                    intent.putExtra("judul",judul);
-                    intent.putExtra("harga",harga);
-                    intent.putExtra("urlFoto",urlFoto);
-                    startActivityForResult(intent,REQ_CODE);
+                    if (fungsi.cekKoneksi()){
+                        intent=new Intent(getActivity(), ProdukActivity.class);
+                        intent.putExtra("idIklan",idIklan);
+                        intent.putExtra("judul",judul);
+                        intent.putExtra("harga",harga);
+                        intent.putExtra("urlFoto",urlFoto);
+                        startActivityForResult(intent,REQ_CODE);
+                    }else {
+                        Toast.makeText(context, "Koneksi terputus, silahkan refresh halaman.", Toast.LENGTH_SHORT).show();
+                    }
 
                 }
             });
@@ -148,6 +126,14 @@ public class Terbaru extends Fragment {
             if (resultCode== Activity.RESULT_OK){
                 Log.w(TAG,"XXXXXXXXXXXXXXXXXXXXX: "+data.getStringExtra("juduls"));
             }
+        }
+    }
+
+    @Override
+    public void onDelegateFinish(ArrayList<DataIklan> arrayIklan) {
+        if (fungsi.cekKoneksi()){
+            this.data=arrayIklan;
+            grid.setAdapter(new TerbaruAdapter(context,data));
         }
     }
 }

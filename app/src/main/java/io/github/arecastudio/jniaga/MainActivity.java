@@ -1,10 +1,14 @@
 package io.github.arecastudio.jniaga;
 
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,9 +24,11 @@ import android.widget.Toast;
 
 import com.facebook.CallbackManager;
 
+import io.github.arecastudio.jniaga.ctrl.Fungsi;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 import io.github.arecastudio.jniaga.fragments.BuatBaru;
 import io.github.arecastudio.jniaga.fragments.Cari;
+import io.github.arecastudio.jniaga.fragments.Disko;
 import io.github.arecastudio.jniaga.fragments.Kategori;
 import io.github.arecastudio.jniaga.fragments.LihatPost;
 import io.github.arecastudio.jniaga.fragments.LoginFB;
@@ -35,6 +41,7 @@ public class MainActivity extends AppCompatActivity
     private boolean login_stat;
     private FrameLayout fMain;
     private FragmentManager fm;
+    //private Fungsi fungsi;
 
     private CallbackManager callbackManager;
     private String fireToken;
@@ -45,6 +52,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         StaticUtil.setContext(this);
+        //fungsi=new Fungsi(this);
 
         //firebase messager stuff
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -116,7 +124,31 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            //super.onBackPressed();
+            final AlertDialog.Builder builder=new AlertDialog.Builder(this);
+            builder
+                    .setTitle("Konfirmasi")
+                    .setIcon(R.mipmap.ic_launcher)
+                    .setMessage("Yakin untuk tutup?")
+                    .setPositiveButton("Tutup", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Log.w(TAG,"ya");
+                            //onBackPressed();
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //
+                            Log.w(TAG,"tidak");
+                        }
+                    })
+                    .setCancelable(true);
+            final AlertDialog dialog=builder.create();
+            dialog.getWindow().setBackgroundDrawableResource(R.drawable.side_nav_bar);
+            dialog.show();
         }
     }
 
@@ -145,40 +177,37 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        final Fungsi fungsi=new Fungsi(this);
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        /*if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }*/
-
         switch (id){
             case R.id.nav_terbaru:
                 setTitle("Postingan Terbaru");
-                fm.beginTransaction().replace(R.id.MainFrame,new Terbaru()).commit();
+                if (fungsi.cekKoneksi()){
+                    fm.beginTransaction().replace(R.id.MainFrame,new Terbaru()).commit();
+                }else {
+                    fm.beginTransaction().replace(R.id.MainFrame,new Disko()).commit();
+                }
                 break;
             case R.id.nav_kategori:
                 setTitle("Kategori");
-                fm.beginTransaction().replace(R.id.MainFrame,new Kategori()).commit();
+                if (fungsi.cekKoneksi()){
+                    fm.beginTransaction().replace(R.id.MainFrame,new Kategori()).commit();
+                }else {
+                    fm.beginTransaction().replace(R.id.MainFrame,new Disko()).commit();
+                }
                 break;
             case R.id.nav_pencarian:
                 setTitle("Pencarian");
                 fm.beginTransaction().replace(R.id.MainFrame,new Cari()).commit();
                 break;
             case R.id.nav_login:
-                setTitle("Login akun");
-                //fm.beginTransaction().replace(R.id.MainFrame,new LoginFB()).commit();
-                fm.beginTransaction().replace(R.id.MainFrame,new LoginUser()).commit();
+                setTitle("Login Akun");
+                if (fungsi.cekKoneksi()){
+                    fm.beginTransaction().replace(R.id.MainFrame,new LoginUser()).commit();
+                }else {
+                    fm.beginTransaction().replace(R.id.MainFrame,new Disko()).commit();
+                }
                 break;
             case R.id.nav_buat:
                 setTitle("Buat Iklan baru");
@@ -201,5 +230,14 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void goFragment(FragmentManager manager, Fragment new_fragment,String new_title){
+        if (new Fungsi(this).cekKoneksi()){
+            manager.beginTransaction().replace(R.id.MainFrame,new_fragment).commit();
+            setTitle(new_title);
+        }else{
+            manager.beginTransaction().replace(R.id.MainFrame,new Disko()).commit();
+        }
     }
 }

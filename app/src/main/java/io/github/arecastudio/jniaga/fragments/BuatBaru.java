@@ -45,12 +45,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import io.github.arecastudio.jniaga.R;
 import io.github.arecastudio.jniaga.ctrl.Fungsi;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 import io.github.arecastudio.jniaga.model.DataFoto;
+import io.github.arecastudio.jniaga.model.DataKategori;
 import io.github.arecastudio.jniaga.trans.KirimIklan;
 import io.github.arecastudio.jniaga.trans.TerimaKategori;
 
@@ -60,7 +62,7 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
  * Created by android on 12/6/17.
  */
 
-public class BuatBaru extends Fragment implements View.OnClickListener {
+public class BuatBaru extends Fragment implements View.OnClickListener,TerimaKategori.TerimaKategoriDelegate {
     private final String TAG="BuatBaru";
     private Context context;
     private Fungsi fungsi;
@@ -136,66 +138,9 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
     }
 
     private void Inits(){
-
-        //=========================================================
-
-        final ArrayList<Integer> sid=new ArrayList<>();
-        final ArrayList<String> snama=new ArrayList<>();
-
-        Thread thread=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                JSONObject object=new JSONObject();
-                TerimaKategori trs=new TerimaKategori(context);
-                trs.execute(new JSONObject[]{object});
-
-                JSONObject json=new JSONObject();
-                JSONArray array= null;
-                try {
-                    array = trs.get();
-                    if (array!=null){
-                        for (int i=0;i<array.length();i++){
-                            json=array.getJSONObject(i);
-                            sid.add(json.getInt("id"));
-                            snama.add(json.getString("nama"));
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                ArrayAdapter<String>adapter=new ArrayAdapter<String>(context,R.layout.support_simple_spinner_dropdown_item,snama);
-                adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-                cbx_jenis_iklan.setAdapter(adapter);
-            }
-        });
-        thread.start();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        //=========================================================
-
-        //if ()
-        cbx_jenis_iklan.setSelection(0,true);
-        id_jenis_iklan=sid.get(0);//id dipilih sesuai position
-        View v=cbx_jenis_iklan.getSelectedView();
-        ((TextView)v).setTextColor(Color.BLACK);
-
-        cbx_jenis_iklan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ((TextView)view).setTextColor(Color.BLACK);
-                id_jenis_iklan=sid.get(position);
-                System.out.println("Kategori dipilih: "+id_jenis_iklan+"\n"+((TextView) view).getText());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        JSONObject object=new JSONObject();
+        TerimaKategori trs=new TerimaKategori(context,this);
+        trs.execute(object);
     }
 
     @Override
@@ -410,5 +355,42 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onFinishGetData(ArrayList<DataKategori> data) {
+        final ArrayList<String> snama=new ArrayList<>();
+        final ArrayList<Integer> sid=new ArrayList<>();
+
+        List<DataKategori>list=data;
+
+        for(int i=0;i<data.size();i++){
+            sid.add(data.get(i).getId());
+            snama.add(data.get(i).getNama());
+        }
+
+        ArrayAdapter<String>adapter=new ArrayAdapter<String>(context,R.layout.support_simple_spinner_dropdown_item,snama);
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        cbx_jenis_iklan.setAdapter(adapter);
+        //=========================================================
+        //if ()
+        cbx_jenis_iklan.setSelection(0,true);
+        id_jenis_iklan=sid.get(0);//id dipilih sesuai position
+        View v=cbx_jenis_iklan.getSelectedView();
+        ((TextView)v).setTextColor(Color.BLACK);
+
+        cbx_jenis_iklan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ((TextView)view).setTextColor(Color.BLACK);
+                id_jenis_iklan=sid.get(position);
+                System.out.println("Kategori dipilih: "+id_jenis_iklan+"\n"+((TextView) view).getText());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 }

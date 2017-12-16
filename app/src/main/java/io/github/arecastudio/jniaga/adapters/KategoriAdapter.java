@@ -61,23 +61,11 @@ public class KategoriAdapter extends BaseAdapter {
 
         DataKategori dk=data.get(position);
 
-
         ImageView imageView=(ImageView)convertView.findViewById(R.id.imageView);
-
-        //imageView.setLayoutParams(new android.widget.LinearLayout.LayoutParams(100, 100));
-        //imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        //imageView.setPadding(2, 2, 2, 2);
 
         TextView tx_title=(TextView)convertView.findViewById(R.id.tx_title);
 
-        //imageView.setImageResource(icons[position]);
-
-        //imageView.setImageResource(dk.getIcon());
-        //if (dk.getIcon()!=null) imageView.setImageBitmap(dk.getIcon());
-
-        //new GetImageFromURL(imageView).execute(dk.getIcon());
-
-        if (dk!=null){
+        if (getCount()>0){
             tx_title.setText(dk.getNama());
             if (dk.getIcon()!=null){
                 Picasso.with(context).load(dk.getIcon()).resize(100,100).centerCrop().into(imageView);

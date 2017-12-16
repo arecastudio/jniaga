@@ -1,11 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="io.github.arecastudio.jniaga.activities.ProdukActivity">
 
     <include layout="@layout/toolbar"/>
 
-</RelativeLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="5dp">
+            <TextView
+                android:id="@+id/tx_judul"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:textColor="@color/colorPurpleDark"
+                android:layout_margin="@dimen/item_space"
+                android:text="@string/app_name"/>
+            <TextView
+                android:id="@+id/cap_harga"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tx_judul"
+                android:layout_margin="@dimen/item_space"
+                android:text="Harga"/>
+
+            <TextView
+                android:id="@+id/tx_harga"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/cap_harga"
+                android:layout_alignBottom="@+id/cap_harga"
+                android:layout_alignStart="@+id/tx_isi"
+                android:text="@string/app_name" />
+
+            <TextView android:id="@+id/cap_kategori"
+                android:text="Kategori"
+                android:layout_below="@id/cap_harga"
+                android:layout_margin="@dimen/item_space"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tx_kategori"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/cap_kategori"
+                android:layout_alignBottom="@+id/cap_kategori"
+                android:layout_alignStart="@+id/tx_isi"
+                android:text="@string/app_name" />
+
+            <TextView
+                android:id="@+id/cap_isi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/cap_kategori"
+                android:layout_margin="@dimen/item_space"
+                android:text="Keterangan"/>
+            <TextView
+                android:id="@+id/tx_isi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/cap_kategori"
+                android:layout_toEndOf="@id/cap_isi"
+                android:layout_margin="@dimen/item_space"
+                android:text="@string/app_name"/>
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tx_isi"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"/>
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+
+</LinearLayout>

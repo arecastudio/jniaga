@@ -3,6 +3,7 @@ package io.github.arecastudio.jniaga.trans;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -16,6 +17,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.arecastudio.jniaga.R;
+import io.github.arecastudio.jniaga.ctrl.Fungsi;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 import io.github.arecastudio.jniaga.model.DataKategori;
 
@@ -23,24 +26,32 @@ import io.github.arecastudio.jniaga.model.DataKategori;
  * Created by android on 12/2/17.
  */
 
-public class TerimaKategori extends AsyncTask<Object, Object, JSONArray> {
-
+public class TerimaKategori extends AsyncTask<Object, Object, ArrayList<DataKategori>> {
+    private final String TAG="TerimaKategori";
     private Context context;
     private ProgressDialog dialog;
-    private List<DataKategori> kategoriList;
+    private ArrayList<DataKategori> kategoriList;
     public JSONArray array=null;
     public JSONObject jsonResponse;
 
-    private String retVal;
+    private Fungsi fungsi;
     private String url;
 
-    public TerimaKategori(Context context) {
+    private TerimaKategoriDelegate delegate;
+
+    public interface TerimaKategoriDelegate{
+        void onFinishGetData(ArrayList<DataKategori> data);
+    }
+
+    public TerimaKategori(Context context,TerimaKategoriDelegate delegate) {
         this.context = context;
+        this.delegate=delegate;
+        fungsi=new Fungsi(context);
         url=StaticUtil.getWebUrl()+"api/kategori.php";
     }
 
     @Override
-    protected JSONArray doInBackground(Object... params) {
+    protected ArrayList<DataKategori> doInBackground(Object... params) {
         Object json=params[0];
         HttpClient client = new DefaultHttpClient();
         HttpConnectionParams.setConnectionTimeout(client.getParams(), 100000);
@@ -61,11 +72,21 @@ public class TerimaKategori extends AsyncTask<Object, Object, JSONArray> {
             //ArrayList<DataKategori> resFromServer = org.apache.http.util.EntityUtils.toString(response.getEntity());;
 
             jsonResponse=new JSONObject(resFromServer);
-
             array=jsonResponse.getJSONArray("kategori");
+
+            JSONObject jos=new JSONObject();
             for (int i=0;i<array.length();i++){
-                //json=array.getJSONArray(i);
-                //System.out.println(array.get(i));
+                jos=array.getJSONObject(i);
+                //id=jos.getString("id").toString();
+                DataKategori dk=new DataKategori();
+                dk.setId(jos.getInt("id"));
+                dk.setNama(jos.getString("nama"));
+                String url_icon=StaticUtil.getWebUrl()+"assets/icons/kategori/"+jos.getString("id")+".png";
+
+                Log.d(TAG,url_icon);
+                dk.setIcon(url_icon);
+
+                kategoriList.add(dk);
             }
 
 
@@ -73,16 +94,28 @@ public class TerimaKategori extends AsyncTask<Object, Object, JSONArray> {
             e.printStackTrace();
         }
 
-        return array;
+        return kategoriList;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+
+        dialog=new ProgressDialog(context);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setMessage(context.getString(R.string.tunggu_progress));
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.side_nav_bar);
+        dialog.setIndeterminate(false);
+        dialog.setCancelable(true);
+        dialog.show();
     }
 
     @Override
-    protected void onPostExecute(JSONArray jsonArray) {
-        super.onPostExecute(jsonArray);
+    protected void onPostExecute(ArrayList<DataKategori> dataArray) {
+        super.onPostExecute(dataArray);
+        dialog.dismiss();
+        if (delegate!=null){
+            delegate.onFinishGetData(dataArray);
+        }
     }
 }

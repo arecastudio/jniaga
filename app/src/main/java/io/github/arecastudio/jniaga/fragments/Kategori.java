@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import bolts.Task;
 import io.github.arecastudio.jniaga.R;
 import io.github.arecastudio.jniaga.adapters.KategoriAdapter;
+import io.github.arecastudio.jniaga.ctrl.Fungsi;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 import io.github.arecastudio.jniaga.model.DataKategori;
 import io.github.arecastudio.jniaga.trans.TerimaKategori;
@@ -33,7 +34,7 @@ import io.github.arecastudio.jniaga.trans.TerimaKategori;
  * Created by android on 12/1/17.
  */
 
-public class Kategori extends Fragment {
+public class Kategori extends Fragment implements TerimaKategori.TerimaKategoriDelegate {
     private GridView grid;
     private ArrayList data;
     private Context context;
@@ -42,9 +43,11 @@ public class Kategori extends Fragment {
     private final String TAG="Kategori.java";
     private String urls=null;
     private String id=null;
+    private Fungsi fungsi;
 
     public Kategori(){
         context=StaticUtil.getContext();
+        fungsi=new Fungsi(context);
         isConnected=true;
 
         GetData();
@@ -56,67 +59,8 @@ public class Kategori extends Fragment {
 
     private void GetData(){
         JSONObject object=new JSONObject();
-        TerimaKategori trs=new TerimaKategori(context);
-        trs.execute(new JSONObject[]{object});
-
-        JSONObject json=new JSONObject();
-        JSONArray array= null;
-        try {
-            array = trs.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        if (array!=null){
-            data=new ArrayList<DataKategori>();
-            try {
-                for (int i=0;i<array.length();i++){
-                    json=array.getJSONObject(i);
-                    id=json.getString("id").toString();
-                    DataKategori dk=new DataKategori();
-                    dk.setId(json.getInt("id"));
-                    dk.setNama(json.getString("nama"));
-                    String url_icon=StaticUtil.getWebUrl()+"assets/icons/kategori/"+json.getString("id")+".png";
-                    /*
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            iconPath.child("icons/kategori/"+json.getString("id")+".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    urls=uri.toString();
-                                }
-                            });
-                        }
-                    }).start();*/
-
-                    Log.d(TAG,url_icon);
-                    dk.setIcon(url_icon);
-
-                    data.add(dk);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-            //List<JSONArray> list=Arrays.asList(array);
-
-
-        }else {
-            /*data=new ArrayList<DataKategori>();
-            for (int i=1;i<=3;i++){
-                DataKategori dk=new DataKategori();
-                dk.setId(i);
-                dk.setNama("Kategori "+i);
-
-                data.add(dk);
-            }*/
-
-            isConnected=false;
-        }
+        TerimaKategori trs=new TerimaKategori(context,this);
+        trs.execute(object);
     }
 
     @Nullable
@@ -124,15 +68,22 @@ public class Kategori extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         int layId=0;
         View view=null;
-        if(isConnected){
+        if(fungsi.cekKoneksi()){
             layId=R.layout.frame_kategori;
             view=(View)inflater.inflate(layId,container,false);
             grid=(GridView)view.findViewById(R.id.gridKategori);
-            grid.setAdapter(new KategoriAdapter(StaticUtil.getContext(),data));
         }else {
             layId=R.layout.frame_notkonek;
             view=(View)inflater.inflate(layId,container,false);
         }
         return view;
+    }
+
+    @Override
+    public void onFinishGetData(ArrayList<DataKategori> data) {
+        if (fungsi.cekKoneksi()){
+            this.data=data;
+            grid.setAdapter(new KategoriAdapter(StaticUtil.getContext(),data));
+        }
     }
 }

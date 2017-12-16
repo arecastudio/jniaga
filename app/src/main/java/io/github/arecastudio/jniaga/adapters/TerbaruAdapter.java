@@ -54,26 +54,29 @@ public class TerbaruAdapter extends BaseAdapter {
         if (convertView==null){
             convertView=inflater.inflate(R.layout.adapter_terbaru,null);
         }
-        DataIklan di=data.get(position);
 
-        TextView tx_judul=(TextView)convertView.findViewById(R.id.tx_judul);
-        tx_judul.setText(di.getJudul());
-        tx_judul.setTag(di.getIdIklan()+"");
+        if (getCount()>0){
+            DataIklan di=data.get(position);
 
-        String harga=fungsi.FormatIDR(di.getHarga());
+            TextView tx_judul=(TextView)convertView.findViewById(R.id.tx_judul);
+            tx_judul.setText(di.getJudul());
+            tx_judul.setTag(di.getIdIklan()+"");
 
-        TextView tx_harga=convertView.findViewById(R.id.tx_harga);
-        tx_harga.setText(""+harga);
-        tx_harga.setTag(di.getNamaGambar());
+            String harga=fungsi.FormatIDR(di.getHarga());
 
-        ImageView imageView=(ImageView) convertView.findViewById(R.id.imageView);
+            TextView tx_harga=convertView.findViewById(R.id.tx_harga);
+            tx_harga.setText(""+harga);
+            tx_harga.setTag(di.getNamaGambar());
 
-        if (di.getNamaGambar()!=null){
-            //new GetImageFromURL(imageView).execute(di.getNamaGambar());
-            Picasso.with(context).load(di.getNamaGambar()).resize(IMG_SIZE,IMG_SIZE).centerCrop().into(imageView);
-        }else {
-            //imageView.setImageResource(R.mipmap.ic_noimage);
-            Picasso.with(context).load(R.mipmap.ic_noimage).resize(IMG_SIZE,IMG_SIZE).centerCrop().into(imageView);
+            ImageView imageView=(ImageView) convertView.findViewById(R.id.imageView);
+
+            if (di.getNamaGambar()!=null){
+                //new GetImageFromURL(imageView).execute(di.getNamaGambar());
+                Picasso.with(context).load(di.getNamaGambar()).resize(IMG_SIZE,IMG_SIZE).centerCrop().into(imageView);
+            }else {
+                //imageView.setImageResource(R.mipmap.ic_noimage);
+                Picasso.with(context).load(R.mipmap.ic_noimage).resize(IMG_SIZE,IMG_SIZE).centerCrop().into(imageView);
+            }
         }
 
         return convertView;
