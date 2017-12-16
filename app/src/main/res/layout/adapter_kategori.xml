@@ -10,6 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:id="@+id/imageView"
+        android:background="@drawable/zimage_border"
+        android:padding="30dp"
         app:srcCompat="@mipmap/ic_terbaru"/>
 
     <TextView

@@ -25,7 +25,7 @@ public class TerbaruAdapter extends BaseAdapter {
     private ArrayList<DataIklan> data;
     private LayoutInflater inflater;
     private Fungsi fungsi;
-    private final int IMG_SIZE=150;
+    private final int IMG_SIZE=100;
 
     public TerbaruAdapter(Context context,ArrayList<DataIklan>data){
         this.context=context;
@@ -58,11 +58,13 @@ public class TerbaruAdapter extends BaseAdapter {
 
         TextView tx_judul=(TextView)convertView.findViewById(R.id.tx_judul);
         tx_judul.setText(di.getJudul());
+        tx_judul.setTag(di.getIdIklan()+"");
 
         String harga=fungsi.FormatIDR(di.getHarga());
 
         TextView tx_harga=convertView.findViewById(R.id.tx_harga);
         tx_harga.setText(""+harga);
+        tx_harga.setTag(di.getNamaGambar());
 
         ImageView imageView=(ImageView) convertView.findViewById(R.id.imageView);
 

@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -39,20 +40,11 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import io.github.arecastudio.jniaga.R;
@@ -61,6 +53,8 @@ import io.github.arecastudio.jniaga.ctrl.StaticUtil;
 import io.github.arecastudio.jniaga.model.DataFoto;
 import io.github.arecastudio.jniaga.trans.KirimIklan;
 import io.github.arecastudio.jniaga.trans.TerimaKategori;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 /**
  * Created by android on 12/6/17.
@@ -76,37 +70,22 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
     //private TextView txTitle;
     private Spinner cbx_jenis_iklan;
     private int id_jenis_iklan;
-    private Bundle bundle;
     private Intent intent;
     private Uri globalUri;
 
     private Button bt_post;
     private Button bt_cam1;
-    private Button bt_cam2;
-    private Button bt_cam3;
     private int baseColor;
 
     private TextView tx_gambar1;
-    private TextView tx_gambar2;
-    private TextView tx_gambar3;
     private ImageView imageView;
 
     //picture takken
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int GAMBAR1 = 11;
-    private static final int GAMBAR2 = 12;
-    private static final int GAMBAR3 = 13;
-
-    private InputStream inputStream1;
-    private InputStream inputStream2;
-    private InputStream inputStream3;
 
     private DataFoto df1;
-    private DataFoto df2;
-    private DataFoto df3;
 
-    private final List<String> lists=Arrays.asList("publish_actions");
-    private AccessToken accToken=null;
     private GoogleSignInAccount account;
 
     private static String tempUri=null;
@@ -114,8 +93,6 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
     public BuatBaru(){
         context= StaticUtil.getContext();
         fungsi=new Fungsi(context);
-
-        bundle=new Bundle();
     }
 
     @Nullable
@@ -143,15 +120,7 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                 //Drawable drawable = (Drawable) bt_cam1.getBackground();
                 baseColor=bt_cam1.getCurrentTextColor();
 
-                bt_cam2=(Button)view.findViewById(R.id.button_camera2);
-                bt_cam2.setOnClickListener(this);
-
-                bt_cam3=(Button)view.findViewById(R.id.button_camera3);
-                bt_cam3.setOnClickListener(this);
-
                 tx_gambar1=(TextView)view.findViewById(R.id.tx_gambar1);
-                tx_gambar2=(TextView)view.findViewById(R.id.tx_gambar2);
-                tx_gambar3=(TextView)view.findViewById(R.id.tx_gambar3);
 
                 imageView=(ImageView)view.findViewById(R.id.imageView);
 
@@ -167,19 +136,6 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
     }
 
     private void Inits(){
-        //T
-        /*if (fungsi.isFbLoggedIn()==true){
-            //txTitle.setText("Fb su masuk.\n"+ AccessToken.getCurrentAccessToken().getToken());
-
-            bundle.putString("fields", "id,email,gender,cover,picture.type(large)");
-            String userId=AccessToken.getCurrentAccessToken().getUserId();
-            txTitle.setText(userId);
-        }else {
-            txTitle.setText("FB blum masuk.");
-        }*/
-
-        //publish_actions
-        //LoginManager.getInstance().logInWithPublishPermissions((Fragment) this, Arrays.asList("publish_actions"));
 
         //=========================================================
 
@@ -250,27 +206,7 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
             case R.id.bt_post:
                 if (account!=null){
                     if (isValid()) {
-                        /*Bundle params = new Bundle();
-                        String isi = "";
-                        isi += edit_judul_iklan.getText().toString().toUpperCase().trim() + "\n\n";
-                        isi += edit_isi_iklan.getText().toString().trim() + "\n\n\n\n";
-                        isi += "#jniaga " + cbx_jenis_iklan.getSelectedItem().toString();
-                        params.putString("message", isi);
-
-                        GraphRequest request = new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/feed", params, HttpMethod.POST, new GraphRequest.Callback() {
-                            @Override
-                            public void onCompleted(GraphResponse response) {
-                                if (response != null) {
-                                    Toast.makeText(context, "Berhasil\n" + response.getRawResponse(), Toast.LENGTH_SHORT).show();
-                                    System.out.println(response + "");
-                                }
-                            }
-                        });
-                        request.executeAsync();
-                        */
-
-                        //System.out.println("tombol");
-                        DataFoto[]dataFotos={df1,df2,df3};
+                        DataFoto[]dataFotos={df1};
                         //==============================
                         try {
                             //List<DataFoto>list=new ArrayList<>();
@@ -280,6 +216,7 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                                     //list.add(dfs);
                                     JSONObject  job=new JSONObject();
                                     job.put("nama",dfs.getUuidNama()+".jpg");
+                                    Log.e(TAG,"Gen name: "+dfs.getUuidNama()+".jpg");
                                     array.put(job);
                                 }
                             }
@@ -318,8 +255,6 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
 
                 }else {
                     Toast.makeText(context,"Silahkan login terlebih dahulu.",Toast.LENGTH_SHORT).show();
-                    //Intent intent=new Intent(getContext(),PermissionActivity.class);
-                    //startActivity(intent);
                 }
                 break;
             case R.id.button_camera1:
@@ -346,15 +281,10 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                                                 PackageManager pm=context.getPackageManager();
                                                 if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)){
                                                     intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                    //intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                                    //        MediaStore.Images.Media.EXTERNAL_CONTENT_URI.getPath());
                                                     if (intent.resolveActivity(context.getPackageManager())!=null){
                                                         intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                                                         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-                                                        //startActivityForResult(intent, GAMBAR1);
                                                     }
-                                                }else {
-                                                    //pm.a
                                                 }
                                             }
                                         } catch (Exception e) {
@@ -374,29 +304,6 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                         })
                         .create()
                         .show();
-
-
-
-                /*Intent intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (intent.resolveActivity(context.getPackageManager())!=null){
-                    startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-                }
-                intent = new Intent();
-                intent.setType("image/jpeg");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Pilih Gambar (*.JPG)"), GAMBAR1);*/
-                break;
-            case R.id.button_camera2:
-                intent = new Intent();
-                intent.setType("image/jpeg");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Pilih Gambar (*.JPG)"), GAMBAR2);
-                break;
-            case R.id.button_camera3:
-                intent = new Intent();
-                intent.setType("image/jpeg");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Pilih Gambar (*.JPG)"), GAMBAR3);
                 break;
             default:
         }
@@ -421,36 +328,14 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                             .setGuidelines(CropImageView.Guidelines.ON)
                             .setAspectRatio(1, 1)
                             .start(context, this);
-/*
-                    df1=fungsi.dumpImageMetaData(imgUri);
-                    if(df1.getUkuran()<=LIMIT_SIZE){
-                        df1.setFis((FileInputStream)instr);
-
-                        bt_cam1.setTextColor(Color.BLUE);
-                        tx_gambar1.setText("Gambar "+df1.getNama()+" dipilih");
-                    }else {
-                        df1=null;
-                        tx_gambar1.setText(LIMITED_SIZE);
-                    }
-                    */
-
-                    //System.out.println(data+"\n"+uuid);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }else if (requestCode==REQUEST_IMAGE_CAPTURE){
                 try {
-                    //Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-
 
                     Log.e(TAG,"xxxxx "+globalUri);
 
-                    //ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                    //thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-                    /*
-                    String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), thumbnail, "Title", null);
-
-                    */
                     CropImage.activity(globalUri)
                             .setGuidelines(CropImageView.Guidelines.ON)
                             .setAspectRatio(1, 1)
@@ -470,16 +355,15 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                 Picasso.with(context).load(resultUri).resize(200,200).centerCrop().into(imageView);
                 Log.e(TAG,resultUri.toString());
 
-                //df1=fungsi.dumpImageMetaData(resultUri);
                 df1=new DataFoto();
-                df1.setUuidNama(UUID.randomUUID().toString());
+                df1.setUuidNama("img-"+UUID.randomUUID().toString()+"-"+System.currentTimeMillis());
                 File fl=new File(resultUri.getPath());
                 df1.setNama(fl.getName());
                 //Log.e(TAG,fl.getName());
                 try {
                     InputStream is=new FileInputStream(resultUri.getPath());
                     df1.setFis((FileInputStream)is);
-                    bt_cam1.setTextColor(Color.BLUE);
+                    //bt_cam1.setTextColor(Color.BLUE);
                     tx_gambar1.setText("Gambar "+df1.getNama()+" dipilih");
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -489,53 +373,6 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
                 Log.e(TAG,error.toString());
             }
         }
-/*
-        if (requestCode==GAMBAR2 && resultCode== Activity.RESULT_OK){
-            if (data!=null){
-                try{
-                    InputStream instr = context.getContentResolver().openInputStream(data.getData());
-                    Uri imgUri = data.getData();
-                    String picturePath = imgUri.getPath();
-
-                    df2=fungsi.dumpImageMetaData(imgUri);
-                    if (df2.getUkuran()<=LIMIT_SIZE){
-
-                        df2.setFis((FileInputStream)instr);
-
-                        bt_cam2.setTextColor(Color.BLUE);
-                        tx_gambar2.setText("Gambar "+df2.getNama()+" dipilih");
-                    }else {
-                        df2=null;
-                        tx_gambar2.setText(LIMITED_SIZE);
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        if (requestCode==GAMBAR3 && resultCode== Activity.RESULT_OK){
-            if (data!=null){
-                try{
-                    InputStream instr = context.getContentResolver().openInputStream(data.getData());
-                    Uri imgUri = data.getData();
-                    String picturePath = imgUri.getPath();
-
-                    df3=fungsi.dumpImageMetaData(imgUri);
-                    if (df3.getUkuran()<=LIMIT_SIZE){
-                        df3.setFis((FileInputStream)instr);
-                        bt_cam3.setTextColor(Color.BLUE);
-                        tx_gambar3.setText("Gambar "+df3.getNama()+" dipilih");
-                    }else {
-                        df3=null;
-                        tx_gambar3.setText(LIMITED_SIZE);
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }
-        */
     }
 
     private boolean isValid(){
@@ -557,23 +394,21 @@ public class BuatBaru extends Fragment implements View.OnClickListener {
         edit_judul_iklan.requestFocus();
 
         bt_cam1.setTextColor(baseColor);
-        bt_cam2.setTextColor(baseColor);
-        bt_cam3.setTextColor(baseColor);
 
         tx_gambar1.setText("");
-        tx_gambar2.setText("");
-        tx_gambar3.setText("");
-
-        inputStream1=null;
-        inputStream2=null;
-        inputStream3=null;
 
         df1=null;
-        df2=null;
-        df3=null;
 
         globalUri=null;
 
         imageView.setImageResource(R.mipmap.ic_noimage);
+
+        //sembunyikan keyboard
+        try  {
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
