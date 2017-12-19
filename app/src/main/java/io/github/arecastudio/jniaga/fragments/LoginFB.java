@@ -278,7 +278,7 @@ public class LoginFB extends Fragment implements View.OnClickListener {
             String personId = acct.getId();
             Uri personPhoto = acct.getPhotoUrl();
 
-            Log.e(TAG,acct.zzaap());
+            //Log.e(TAG,acct.zzaap());
         }
     }
 }

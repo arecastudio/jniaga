@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,105 +17,138 @@
         android:padding="3dp"
         android:orientation="vertical">
 
-        <TextView
+        <android.support.v7.widget.CardView
+            android:layout_marginBottom="@dimen/item_space"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Judul"/>
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Judul"/>
 
-        <EditText
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Judul iklan..."
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:layout_marginBottom="20dp"
+                    android:id="@+id/edit_judul_iklan"/>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_marginBottom="@dimen/item_space"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Judul iklan..."
-            android:textStyle="bold"
-            android:textColor="@color/colorPrimaryDark"
-            android:layout_marginBottom="20dp"
-            android:id="@+id/edit_judul_iklan"/>
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:text="Isi"/>
 
-        <include layout="@layout/zeparator"/>
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="30dp"
+                    android:hint="Isi iklan..."
+                    android:layout_marginBottom="20dp"
+                    android:ems="10"
+                    android:inputType="textMultiLine"
+                    android:id="@+id/edit_isi_iklan"/>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
 
-        <TextView
+        <android.support.v7.widget.CardView
+            android:layout_marginBottom="@dimen/item_space"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="Isi"/>
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:text="Kategori"/>
 
-        <EditText
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:id="@+id/spinner_jenis_iklan"
+                    />
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_marginBottom="@dimen/item_space"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="30dp"
-            android:hint="Isi iklan..."
-            android:layout_marginBottom="20dp"
-            android:ems="10"
-            android:inputType="textMultiLine"
-            android:id="@+id/edit_isi_iklan"/>
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:text="Harga (Rp.)"/>
 
-        <include layout="@layout/zeparator"/>
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/edit_harga"
+                    android:hint="Harga..."
+                    android:ems="10"
+                    android:inputType="number" />
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
 
-        <TextView
+        <android.support.v7.widget.CardView
+            android:layout_marginBottom="@dimen/item_space"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="Kategori"/>
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button_camera1"
+                    android:layout_gravity="center"
+                    android:padding="10dp"
+                    android:textColor="@color/colorWhite"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@drawable/button_custom"
+                    android:text="Ambil Gambar"
+                    android:drawableLeft="@drawable/ic_menu_camera"/>
 
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:id="@+id/spinner_jenis_iklan"
-            />
+                <ImageView
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"
+                    android:id="@+id/imageView"
+                    android:layout_gravity="center"
+                    android:background="#f0f0f0"
+                    android:src="@mipmap/ic_noimage"/>
 
-        <include layout="@layout/zeparator"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="Harga (Rp.)"/>
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/edit_harga"
-            android:hint="Harga..."
-            android:ems="10"
-            android:inputType="number" />
-
-        <include layout="@layout/zeparator"/>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="30dp"
-            android:padding="3dp"
-            android:orientation="horizontal">
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/button_camera1"
-                android:padding="10dp"
-                android:textColor="@color/colorWhite"
-                style="?android:attr/borderlessButtonStyle"
-                android:background="@drawable/button_custom"
-                android:text="Ambil Gambar"
-                android:drawableLeft="@drawable/ic_menu_camera"/>
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:id="@+id/imageView"
-            android:layout_gravity="center"
-            android:background="#f0f0f0"
-            android:src="@mipmap/ic_noimage"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:id="@+id/tx_gambar1"/>
-
-        <include layout="@layout/zeparator"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:id="@+id/tx_gambar1"/>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
 
         <Button
             android:layout_width="wrap_content"

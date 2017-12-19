@@ -22,7 +22,17 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.facebook.CallbackManager;
+//import com.facebook.CallbackManager;
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.firebase.ui.auth.ResultCodes;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import org.apache.http.auth.AUTH;
+
+import java.util.Arrays;
+import java.util.List;
 
 import io.github.arecastudio.jniaga.ctrl.Fungsi;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
@@ -43,16 +53,26 @@ public class MainActivity extends AppCompatActivity
     private FragmentManager fm;
     //private Fungsi fungsi;
 
-    private CallbackManager callbackManager;
+    //private CallbackManager callbackManager;
     private String fireToken;
 
     private final String TAG="MainActivity";
+    private final int RC_SIGN_IN = 123;
+
+    private List<AuthUI.IdpConfig>providers;
+    FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         StaticUtil.setContext(this);
         //fungsi=new Fungsi(this);
+
+        providers= Arrays.asList(
+                new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                new AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build(),
+                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
+        );
 
         //firebase messager stuff
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -204,7 +224,25 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_login:
                 setTitle("Login Akun");
                 if (fungsi.cekKoneksi()){
-                    fm.beginTransaction().replace(R.id.MainFrame,new LoginUser()).commit();
+                    //fm.beginTransaction().replace(R.id.MainFrame,new LoginUser()).commit();
+                    /*startActivityForResult(
+                            AuthUI.getInstance()
+                                    .createSignInIntentBuilder()
+                                    .setAvailableProviders(providers)
+                                    .build(),
+                            RC_SIGN_IN);*/
+
+                    user = FirebaseAuth.getInstance().getCurrentUser();
+                    if (user != null) {
+                        // User is signed in
+                        String phoneVer=user.getPhoneNumber();
+                        boolean emailVer=user.isEmailVerified();
+                        phoneVer+=" , "+emailVer;
+                        Log.w(TAG,phoneVer);
+                    } else {
+                        // No user is signed in
+                    }
+
                 }else {
                     fm.beginTransaction().replace(R.id.MainFrame,new Disko()).commit();
                 }
@@ -239,5 +277,23 @@ public class MainActivity extends AppCompatActivity
         }else{
             manager.beginTransaction().replace(R.id.MainFrame,new Disko()).commit();
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            if (resultCode == ResultCodes.OK) {
+                // Successfully signed in
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                // ...
+            } else {
+                // Sign in failed, check response for error code
+                // ...
+            }
+        }
+
     }
 }
