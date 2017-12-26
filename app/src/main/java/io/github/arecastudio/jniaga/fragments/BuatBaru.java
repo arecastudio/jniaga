@@ -8,12 +8,16 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -33,6 +37,8 @@ import android.widget.Toast;
 import com.facebook.AccessToken;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -48,6 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import io.github.arecastudio.jniaga.Manifest;
 import io.github.arecastudio.jniaga.R;
 import io.github.arecastudio.jniaga.ctrl.Fungsi;
 import io.github.arecastudio.jniaga.ctrl.StaticUtil;
@@ -76,7 +83,7 @@ public class BuatBaru extends Fragment implements View.OnClickListener,TerimaKat
     private Uri globalUri;
 
     private Button bt_post;
-    private Button bt_cam1;
+    //private Button bt_cam1;
     private int baseColor;
 
     private TextView tx_gambar1;
@@ -86,15 +93,28 @@ public class BuatBaru extends Fragment implements View.OnClickListener,TerimaKat
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int GAMBAR1 = 11;
 
+    private static final int PERMISSION_REQUEST_CODE = 100;
+
+    private int cameraPermission;
+    private int readPermission;
+    private int writePermission;
+
+    private String[] permissions;
+
     private DataFoto df1;
 
-    private GoogleSignInAccount account;
+    private FirebaseUser user;
 
     private static String tempUri=null;
 
     public BuatBaru(){
         context= StaticUtil.getContext();
         fungsi=new Fungsi(context);
+
+        permissions=new String[]{android.Manifest.permission.CAMERA,android.Manifest.permission.READ_EXTERNAL_STORAGE,android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        cameraPermission=ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA);
+        writePermission=ContextCompat.checkSelfPermission(context,android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        readPermission=ContextCompat.checkSelfPermission(context,android.Manifest.permission.READ_EXTERNAL_STORAGE);
     }
 
     @Nullable
@@ -102,9 +122,9 @@ public class BuatBaru extends Fragment implements View.OnClickListener,TerimaKat
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=null;
         if (fungsi.cekKoneksi()){
-            account= GoogleSignIn.getLastSignedInAccount(getActivity());
+            user= FirebaseAuth.getInstance().getCurrentUser();
             //if (AccessToken.getCurrentAccessToken()!=null){
-            if (account!=null){
+            if (user!=null){
                 view=inflater.inflate(R.layout.frame_baru,container,false);
                 //txTitle=(TextView)view.findViewById(R.id.tx_title);
                 edit_isi_iklan=(EditText)view.findViewById(R.id.edit_isi_iklan);
@@ -116,15 +136,16 @@ public class BuatBaru extends Fragment implements View.OnClickListener,TerimaKat
                 bt_post=(Button)view.findViewById(R.id.bt_post);
                 bt_post.setOnClickListener(this);
 
-                bt_cam1=(Button)view.findViewById(R.id.button_camera1);
-                bt_cam1.setOnClickListener(this);
+                //bt_cam1=(Button)view.findViewById(R.id.button_camera1);
+                //bt_cam1.setOnClickListener(this);
 
                 //Drawable drawable = (Drawable) bt_cam1.getBackground();
-                baseColor=bt_cam1.getCurrentTextColor();
+                //baseColor=bt_cam1.getCurrentTextColor();
 
                 tx_gambar1=(TextView)view.findViewById(R.id.tx_gambar1);
 
                 imageView=(ImageView)view.findViewById(R.id.imageView);
+                imageView.setOnClickListener(this);
 
                 Inits();
             }else {
@@ -146,10 +167,10 @@ public class BuatBaru extends Fragment implements View.OnClickListener,TerimaKat
     @Override
     public void onClick(View v) {
         //cek ulang
-        account= GoogleSignIn.getLastSignedInAccount(getActivity());
+        user=FirebaseAuth.getInstance().getCurrentUser();
         switch (v.getId()){
             case R.id.bt_post:
-                if (account!=null){
+                if (user!=null){
                     if (isValid()) {
                         DataFoto[]dataFotos={df1};
                         //==============================
@@ -173,7 +194,7 @@ public class BuatBaru extends Fragment implements View.OnClickListener,TerimaKat
                             jo.put("judul",edit_judul_iklan.getText().toString().trim().toUpperCase());
                             jo.put("isi",edit_isi_iklan.getText().toString().trim());
                             jo.put("id_kategori",id_jenis_iklan);
-                            jo.put("user_id",account.getId());
+                            jo.put("user_id",user.getUid());
                             jo.put("harga",Double.parseDouble(edit_harga.getText().toString().trim()));
                             jo.put("foto2",array);
 
@@ -202,8 +223,12 @@ public class BuatBaru extends Fragment implements View.OnClickListener,TerimaKat
                     Toast.makeText(context,"Silahkan login terlebih dahulu.",Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.button_camera1:
-                final String[] items={"Dari Kamera","Dari Gallery","Batal"};
+            case R.id.imageView:
+                takePictures();
+                break;
+            //case R.id.button_camera1:
+                //takePictures();
+                /*final String[] items={"Dari Kamera","Dari Gallery","Batal"};
                 final AlertDialog.Builder builder=new AlertDialog.Builder(context);
                 builder.setTitle("Ambil Gambar")
                         .setIcon(R.drawable.ic_menu_camera)
@@ -214,26 +239,36 @@ public class BuatBaru extends Fragment implements View.OnClickListener,TerimaKat
                                 switch (pos){
                                     case 0:
                                         //kamera
-                                        try {
-                                            String imageFileName =System.currentTimeMillis()+".jpg";
-                                            File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"jniaga" );
-                                            storageDir.mkdirs();
-                                            File images=new File(storageDir,imageFileName);
-                                            Uri photoURI=Uri.fromFile(images);
-                                            globalUri=photoURI;
-                                            if (images!=null){
-                                                Log.e(TAG,photoURI+"");
-                                                PackageManager pm=context.getPackageManager();
-                                                if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)){
-                                                    intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                                    if (intent.resolveActivity(context.getPackageManager())!=null){
-                                                        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                                        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+
+                                        if (cameraPermission!=PackageManager.PERMISSION_GRANTED ||
+                                                readPermission!=PackageManager.PERMISSION_GRANTED ||
+                                                writePermission!=PackageManager.PERMISSION_GRANTED){
+                                            ActivityCompat.requestPermissions(getActivity(),
+                                                    permissions,
+                                                    PERMISSION_REQUEST_CODE
+                                                    );
+                                        }else{
+                                            try {
+                                                String imageFileName =System.currentTimeMillis()+".jpg";
+                                                File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"jniaga" );
+                                                storageDir.mkdirs();
+                                                File images=new File(storageDir,imageFileName);
+                                                Uri photoURI=Uri.fromFile(images);
+                                                globalUri=photoURI;
+                                                if (images!=null){
+                                                    Log.e(TAG,photoURI+"");
+                                                    PackageManager pm=context.getPackageManager();
+                                                    if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)){
+                                                        intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                        if (intent.resolveActivity(context.getPackageManager())!=null){
+                                                            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                                                        }
                                                     }
                                                 }
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
                                             }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
                                         }
                                         break;
                                     case 1:
@@ -248,10 +283,70 @@ public class BuatBaru extends Fragment implements View.OnClickListener,TerimaKat
                             }
                         })
                         .create()
-                        .show();
-                break;
+                        .show();*/
+            //    break;
             default:
         }
+    }
+
+    private void takePictures(){
+        user=FirebaseAuth.getInstance().getCurrentUser();
+        final String[] items={"Dari Kamera","Dari Gallery","Batal"};
+        final AlertDialog.Builder builder=new AlertDialog.Builder(context);
+        builder.setTitle("Ambil Gambar")
+                .setIcon(R.drawable.ic_menu_camera)
+                .setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int pos) {
+                        Log.d(TAG,pos+". "+items[pos]);
+                        switch (pos){
+                            case 0:
+                                //kamera
+
+                                if (cameraPermission!=PackageManager.PERMISSION_GRANTED ||
+                                        readPermission!=PackageManager.PERMISSION_GRANTED ||
+                                        writePermission!=PackageManager.PERMISSION_GRANTED){
+                                    ActivityCompat.requestPermissions(getActivity(),
+                                            permissions,
+                                            PERMISSION_REQUEST_CODE
+                                    );
+                                }else{
+                                    try {
+                                        String imageFileName =System.currentTimeMillis()+".jpg";
+                                        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"jniaga" );
+                                        storageDir.mkdirs();
+                                        File images=new File(storageDir,imageFileName);
+                                        Uri photoURI=Uri.fromFile(images);
+                                        globalUri=photoURI;
+                                        if (images!=null){
+                                            Log.e(TAG,photoURI+"");
+                                            PackageManager pm=context.getPackageManager();
+                                            if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)){
+                                                intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                if (intent.resolveActivity(context.getPackageManager())!=null){
+                                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                                    startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                                                }
+                                            }
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                break;
+                            case 1:
+                                //gallery
+                                intent = new Intent();
+                                intent.setType("image/jpeg");
+                                intent.setAction(Intent.ACTION_GET_CONTENT);
+                                startActivityForResult(Intent.createChooser(intent, "Pilih Gambar (*.JPG)"), GAMBAR1);
+                                break;
+                            default:
+                        }
+                    }
+                })
+                .create()
+                .show();
     }
 
     @Override
@@ -320,6 +415,22 @@ public class BuatBaru extends Fragment implements View.OnClickListener,TerimaKat
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode==PERMISSION_REQUEST_CODE){
+            if (grantResults.length>0 &&
+                    (grantResults[0]==PackageManager.PERMISSION_GRANTED ||
+                    grantResults[1]==PackageManager.PERMISSION_GRANTED ||
+                    grantResults[2]==PackageManager.PERMISSION_GRANTED)
+                    ){
+                Log.w(TAG,"All permission granted.");
+            }else {
+                Log.e(TAG,"Permission denied.");
+            }
+        }
+    }
+
     private boolean isValid(){
         boolean ret=false;
         if (edit_judul_iklan.getText().toString().trim().length()>0
@@ -338,7 +449,7 @@ public class BuatBaru extends Fragment implements View.OnClickListener,TerimaKat
         edit_harga.setText("");
         edit_judul_iklan.requestFocus();
 
-        bt_cam1.setTextColor(baseColor);
+        //bt_cam1.setTextColor(baseColor);
 
         tx_gambar1.setText("");
 

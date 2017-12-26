@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -14,11 +14,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#cccccc"
         android:padding="3dp"
         android:orientation="vertical">
 
         <android.support.v7.widget.CardView
-            android:layout_marginBottom="@dimen/item_space"
+            android:layout_marginBottom="@dimen/card_space"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
@@ -42,7 +43,7 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:layout_marginBottom="@dimen/item_space"
+            android:layout_marginBottom="@dimen/card_space"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
@@ -68,7 +69,7 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:layout_marginBottom="@dimen/item_space"
+            android:layout_marginBottom="@dimen/card_space"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
@@ -91,7 +92,7 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:layout_marginBottom="@dimen/item_space"
+            android:layout_marginBottom="@dimen/card_space"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
@@ -115,14 +116,14 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:layout_marginBottom="@dimen/item_space"
+            android:layout_marginBottom="@dimen/card_space"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <Button
+                <!--Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/button_camera1"
@@ -132,28 +133,106 @@
                     style="?android:attr/borderlessButtonStyle"
                     android:background="@drawable/button_custom"
                     android:text="Ambil Gambar"
-                    android:drawableLeft="@drawable/ic_menu_camera"/>
+                    android:drawableLeft="@drawable/ic_menu_camera"/-->
 
-                <ImageView
-                    android:layout_width="250dp"
-                    android:layout_height="250dp"
-                    android:id="@+id/imageView"
-                    android:layout_gravity="center"
-                    android:background="#f0f0f0"
-                    android:src="@mipmap/ic_noimage"/>
+                <LinearLayout android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout android:layout_margin="@dimen/item_space"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <ImageView
+                            android:layout_width="@dimen/image_tiny"
+                            android:layout_height="@dimen/image_tiny"
+                            android:id="@+id/imageView"
+                            android:layout_gravity="center"
+                            android:background="#f0f0f0"
+                            android:src="@mipmap/ic_noimage"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:id="@+id/tx_gambar1"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_margin="@dimen/item_space"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <ImageView
+                            android:layout_width="@dimen/image_tiny"
+                            android:layout_height="@dimen/image_tiny"
+                            android:id="@+id/imageView2"
+                            android:layout_gravity="center"
+                            android:background="#f0f0f0"
+                            android:src="@mipmap/ic_noimage"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:id="@+id/tx_gambar2"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_margin="@dimen/item_space"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <ImageView
+                            android:layout_width="@dimen/image_tiny"
+                            android:layout_height="@dimen/image_tiny"
+                            android:id="@+id/imageView3"
+                            android:layout_gravity="center"
+                            android:background="#f0f0f0"
+                            android:src="@mipmap/ic_noimage"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:id="@+id/tx_gambar3"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_margin="@dimen/item_space"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <ImageView
+                            android:layout_width="@dimen/image_tiny"
+                            android:layout_height="@dimen/image_tiny"
+                            android:id="@+id/imageView4"
+                            android:layout_gravity="center"
+                            android:background="#f0f0f0"
+                            android:src="@mipmap/ic_noimage"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:id="@+id/tx_gambar4"/>
+
+                    </LinearLayout>
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:id="@+id/tx_gambar1"/>
+                    android:layout_gravity="center"
+                    android:padding="@dimen/item_space"
+                    android:text="@string/take_pictures"/>
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/card_space"
             android:layout_gravity="center"
             android:paddingHorizontal="35dp"
             android:paddingVertical="25dp"
@@ -166,4 +245,4 @@
 
     </LinearLayout>
 
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>

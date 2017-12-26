@@ -6,4 +6,6 @@
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorPurpleDark">#550055</color>
+    <color name="colorWarning">#ff9966</color>
+    <color name="colorBlackTransparent">#99000000</color>
 </resources>

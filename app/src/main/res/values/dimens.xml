@@ -6,4 +6,8 @@
     <dimen name="nav_header_height">180dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="item_space">10dp</dimen>
+    <dimen name="card_space">40dp</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="image_tiny">55dp</dimen>
 </resources>

@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 //import com.facebook.CallbackManager;
@@ -28,6 +29,7 @@ import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 
 import org.apache.http.auth.AUTH;
 
@@ -60,19 +62,29 @@ public class MainActivity extends AppCompatActivity
     private final int RC_SIGN_IN = 123;
 
     private List<AuthUI.IdpConfig>providers;
-    FirebaseUser user;
+    private FirebaseUser user;
+
+    private static ImageView imageView;
+
+    public MainActivity(){
+        providers= Arrays.asList(
+                new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                new AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build(),
+                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
+        );
+
+        user=FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    public static ImageView getImageView() {
+        return imageView;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         StaticUtil.setContext(this);
         //fungsi=new Fungsi(this);
-
-        providers= Arrays.asList(
-                new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
-                new AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build(),
-                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
-        );
 
         //firebase messager stuff
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -105,6 +117,7 @@ public class MainActivity extends AppCompatActivity
 
         callbackManager = CallbackManager.Factory.create();*/
 
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -120,7 +133,11 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this,
+                drawer,
+                toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -224,13 +241,13 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_login:
                 setTitle("Login Akun");
                 if (fungsi.cekKoneksi()){
-                    //fm.beginTransaction().replace(R.id.MainFrame,new LoginUser()).commit();
+                    fm.beginTransaction().replace(R.id.MainFrame,new LoginUser()).commit();
                     /*startActivityForResult(
                             AuthUI.getInstance()
                                     .createSignInIntentBuilder()
                                     .setAvailableProviders(providers)
                                     .build(),
-                            RC_SIGN_IN);*/
+                            RC_SIGN_IN);
 
                     user = FirebaseAuth.getInstance().getCurrentUser();
                     if (user != null) {
@@ -241,7 +258,7 @@ public class MainActivity extends AppCompatActivity
                         Log.w(TAG,phoneVer);
                     } else {
                         // No user is signed in
-                    }
+                    }*/
 
                 }else {
                     fm.beginTransaction().replace(R.id.MainFrame,new Disko()).commit();

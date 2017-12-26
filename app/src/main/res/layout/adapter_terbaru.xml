@@ -1,40 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="4dp"
-    android:elevation="2dp"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <TextView
+    <RelativeLayout android:padding="2dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tx_judul"
-        android:textStyle="bold"
-        android:textColor="@color/colorWhite"
-        android:background="@color/colorPurpleDark"
-        android:textAlignment="center"
-        android:text="@string/app_name"/>
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerInParent="true"
+            android:id="@+id/imageView"
+            app:srcCompat="@mipmap/ic_noimage"
+            android:scaleType="centerCrop"/>
 
+        <!-- android:scaleType="centerCrop" -->
 
-    <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_gravity="center"
-        android:id="@+id/imageView"
-        app:srcCompat="@mipmap/ic_noimage"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tx_judul"
+            android:layout_alignParentTop="true"
+            android:textStyle="bold"
+            android:textColor="@color/colorWhite"
+            android:background="@color/colorBlackTransparent"
+            android:textAlignment="center"
+            android:text="@string/app_name"/>
 
-    <!-- android:scaleType="centerCrop" -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/tx_harga"
+            android:textColor="@color/colorWhite"
+            android:background="@color/colorBlackTransparent"
+            android:text="@string/app_name"/>
+    </RelativeLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:id="@+id/tx_harga"
-        android:textColor="@color/colorWhite"
-        android:background="@color/colorPurpleDark"
-        android:text="@string/app_name"/>
-
-</LinearLayout>
+</android.support.v7.widget.CardView>
