@@ -86,8 +86,8 @@ public class BuatBaru extends Fragment implements View.OnClickListener,TerimaKat
     //private Button bt_cam1;
     private int baseColor;
 
-    private TextView tx_gambar1;
-    private ImageView imageView;
+    private TextView tx_gambar1, tx_gambar2, tx_gambar3, tx_gambar4;
+    private ImageView imageView,imageView2,imageView3,imageView4;
 
     //picture takken
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -143,9 +143,21 @@ public class BuatBaru extends Fragment implements View.OnClickListener,TerimaKat
                 //baseColor=bt_cam1.getCurrentTextColor();
 
                 tx_gambar1=(TextView)view.findViewById(R.id.tx_gambar1);
+                tx_gambar2=(TextView)view.findViewById(R.id.tx_gambar2);
+                tx_gambar3=(TextView)view.findViewById(R.id.tx_gambar3);
+                tx_gambar4=(TextView)view.findViewById(R.id.tx_gambar4);
 
                 imageView=(ImageView)view.findViewById(R.id.imageView);
                 imageView.setOnClickListener(this);
+
+                imageView2=(ImageView)view.findViewById(R.id.imageView2);
+                imageView2.setOnClickListener(this);
+
+                imageView3=(ImageView)view.findViewById(R.id.imageView3);
+                imageView3.setOnClickListener(this);
+
+                imageView4=(ImageView)view.findViewById(R.id.imageView4);
+                imageView4.setOnClickListener(this);
 
                 Inits();
             }else {
@@ -404,7 +416,7 @@ public class BuatBaru extends Fragment implements View.OnClickListener,TerimaKat
                     InputStream is=new FileInputStream(resultUri.getPath());
                     df1.setFis((FileInputStream)is);
                     //bt_cam1.setTextColor(Color.BLUE);
-                    tx_gambar1.setText("Gambar "+df1.getNama()+" dipilih");
+                    tx_gambar1.setText(df1.getNama()+"");
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
